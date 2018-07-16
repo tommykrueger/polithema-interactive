@@ -1,0 +1,120 @@
+
+.article
+  background-color: $colors.white
+
+.article-title
+  margin: 0 0 15px 0
+  font-family: 'Vollkorn', serif
+
+.article-excerpt
+  margin: 0 0 25px 0
+
+  & > a:hover
+    color: $colors.blue
+
+
+.article-content
+  clearfix()
+  margin: 20px 0
+  font-family: serif
+
+  a
+    color: $colors.blue
+
+    &:hover
+      text-decoration: underline
+
+    &.btn
+    &.button
+      color: $colors.white
+
+  p
+    margin: 0 0 15px 0
+    color: $colors.black
+    font-size: 1.1em
+    font-family: serif
+    line-height: 165%
+
+  h2
+  h3
+    margin: 25px 0 10px 0
+    font-size: 20px
+    font-family: serif
+
+  h2
+    font-size: 24px
+
+
+  iframe
+  video
+    width: 100%
+
+
+  .wp-caption
+    &.alignleft
+      max-width: 60%
+      float: left
+      margin-right: 20px
+
+    .wp-caption-text
+      margin: 0 0 10px 0
+      padding: 10px
+      font-size: 12px
+      background: $colors.lightGrey
+
+
+
+  ol
+    padding-left: 20px
+    list-style: decimal
+
+
+  ul
+    padding-left: 20px
+    list-style: disc
+
+  ol
+  ul
+    li
+      margin: 0 0 10px 0
+      font-size: 1.05em
+      line-height: 165%
+      word-break: break-word
+
+
+  table
+    width: 100%
+    margin: 0 0 15px 0
+    overflow: auto
+
+    th
+    td
+      padding: 8px 12px
+      text-align: left
+      white-space: nowrap
+
+    td[align="right"]
+      text-align: right
+
+    th
+    thead td
+      padding: 8px 12px
+      background-color: darken($colors.white, 5%)
+
+    tbody
+
+      tr
+
+        &:nth-child(2n+1)
+          td
+            background-color: darken($colors.white, 5%)
+
+
+        &.highlight
+          td
+            color: $colors.white
+            background-color: lighten($colors.orange, 20%)
+
+            a
+              color: $colors.white
+              text-decoration: underline

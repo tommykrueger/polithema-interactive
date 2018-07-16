@@ -1,0 +1,58 @@
+@require '_mixins'
+@require '_input'
+@require '_submit'
+@require '_form'
+
+
+
+.form
+
+  [type=submit]
+    height: 45px
+    padding: 10px 80px 10px 25px
+    background-color: $colors.orange
+    background: linear-gradient(top, lighten($colors.orange, 10%), $colors.orange)
+    border: 1px solid darken($colors.orange, 20%)
+    box-shadow:
+      0px 1px 1px rgba(255,255,255,0.8) inset,
+      1px 1px 3px rgba(0,0,0,0.2),
+      0px 0px 0px 4px rgba(155, 155, 155, 0.35)
+    border-radius: 2px
+    position: relative
+    transition: all 250ms ease-in-out
+
+    span
+      color: darken($colors.orange, 40%)
+      font-weight: bold
+      text-shadow: 0px 1px 1px rgba(255,255,255,0.35)
+
+    .btn-txt-hidden
+      width: 0
+      height: 100%
+      color: $colors.white
+      font-weight: bold
+      line-height: 45px
+      position: absolute
+      right: 52px
+      top: 0
+      overflow: hidden
+      transition: width 250ms ease-in-out
+      background-color: darken($colors.orange, 40%)
+
+    .icon
+      width: 52px
+      height: 100%
+      font-size: 24px
+      line-height: 45px
+      position: absolute
+      right: 0
+      top: 0
+      border-left: 1px solid darken($colors.orange, 20%)
+      box-shadow: 1px 0px 1px rgba(255,255,255,0.4) inset
+
+
+    &:hover
+      padding-right: 200px
+
+      .btn-txt-hidden
+        width: 120px

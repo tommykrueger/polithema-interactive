@@ -1,0 +1,67 @@
+
+
+.post-votes
+
+  width: 100%
+  height: 24px
+  margin: 0 0 15px 0
+  display: block
+  text-indent: 5px
+
+  & > span
+    width: 0
+    height: 24px
+    padding: 0
+    display: block
+    float: left
+    color: $colors.white
+    font-size: 11px
+    line-height: 24px
+    white-space: nowrap
+    overflow: hidden
+    transition: width 250ms ease-in-out
+
+  .post-votes-up
+    background-color: $colors.green
+
+  .post-votes-down
+    background-color: $colors.red
+
+  .post-votes-neutral
+    background-color: $colors.yellow
+
+
+.article-list
+.post-list
+
+  .post-votes
+    margin: 5px 0 0 0
+    height: 4px
+
+    & > span
+      height: 4px
+
+
+
+
+.article-vote
+
+  display: block
+
+  .button-vote-up
+    width: 50%
+    margin: 0 0 20px 0
+    float: left
+    text-transform: uppercase
+    background-color: $colors.green
+
+  .button-vote-down
+    width: 50%
+    margin: 0 0 20px 0
+    float: left
+    text-transform: uppercase
+    background-color: $colors.red
+
+  .button-vote-neutral
+    width: 120px
+    background-color: $colors.yellow

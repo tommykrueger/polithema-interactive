@@ -1,0 +1,45 @@
+form
+.form
+
+  display: block
+
+  .input
+    margin: 0 0 20px 0
+    display: block
+
+  input[type=text]
+  input[type=tel]
+  input[type=password]
+  input[type=email]
+  select
+  textarea
+
+    @extends $input
+    display: block
+
+
+  select
+    margin: 0
+    color: $colors.darkGrey
+
+  textarea
+    margin: 0
+    height: 72px
+
+
+/* Chrome/Opera/Safari */
+::-webkit-input-placeholder {
+  color: $colors.darkGrey;
+}
+/* Firefox 19+ */
+::-moz-placeholder {
+  color: $colors.darkGrey;
+}
+/* IE 10+ */
+:-ms-input-placeholder {
+  color: $colors.darkGrey;
+}
+/* Firefox 18- */
+:-moz-placeholder {
+  color: $colors.darkGrey;
+}

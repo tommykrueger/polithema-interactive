@@ -1,0 +1,31 @@
+{
+  "name": "interactive.polithema.de",
+  "description": "The WordPress Theme for polithema.de",
+  "author": "Tommy Krüger",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "private": "true",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "start": "brunch watch --server",
+    "prod": "brunch build --production"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "auto-reload-brunch": "^2",
+    "autoprefixer": "^6",
+    "babel-brunch": "^6",
+    "babel-preset-env": "^1.7.0",
+    "brunch": "^2",
+    "clean-css-brunch": "^2",
+    "css-brunch": "^2",
+    "csswring": "^5",
+    "javascript-brunch": "^2",
+    "postcss-brunch": "^2",
+    "stylus-brunch": "^2",
+    "uglify-js-brunch": "^2"
+  }
+}

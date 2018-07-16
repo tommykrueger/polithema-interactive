@@ -1,0 +1,49 @@
+.animated-icon
+  width: 16px
+  height: 16px
+  border-radius: 50%
+  border: 1px solid #c0c0c0
+  box-shadow: 0px 0px 1px #909090
+  transition: all 500ms
+  background: $colors.white url('../img/santa1.jpg') no-repeat center center
+  background-size: 80%
+
+
+#map-interactive
+	width: 100%
+	height: 420px
+	margin: 0 auto
+
+path.leaflet-interactive
+  stroke: black
+  stroke-dasharray: 12 8
+
+
+.globe-button
+  font-weight: bold
+  text-align: center
+  line-height: 24px
+  z-index: 1000
+  color: $colors.red
+  cursor: pointer
+  position: absolute
+  left: 10px
+  bottom: 10px
+  border: 1px solid #a0a0a0
+  background-color: $colors.white
+
+  &:hover
+    background-color: darken($colors.white, 0.50)
+
+
+.axis line
+.axis path
+  fill: none
+  stroke: #000
+  shape-rendering: crispEdges
+
+.axis .domain
+  stroke-width: 2px
+
+.axis text
+  font: 10px sans-serif

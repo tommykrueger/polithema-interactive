@@ -1,0 +1,32 @@
+
+.post-list
+
+	display: block
+
+
+	&-item
+		margin: 0 0 10px 0
+		padding: 10px
+
+
+	&-link
+		color: $colors.blue
+		font-weight: bold
+
+		&:hover
+			color: darken($colors.blue, 10%)
+
+
+	&-meta
+		display: block
+		color: $colors.grey
+
+		.post-views
+		.post-comments
+			display: inline-block
+			font-size: 11px
+
+		.post-views:after
+			content: '|'
+			margin: 0 2px 0 6px
+			display: inline-block

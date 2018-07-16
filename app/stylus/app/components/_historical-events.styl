@@ -1,0 +1,114 @@
+
+.historical-events
+	margin: 0
+	padding: 20px
+	display: block
+	background: #404040
+	background: url(../section-bg.jpg) no-repeat
+	background-size: cover
+	// border-left: 4px solid $colors.blue
+
+
+	&-headline
+		margin: 0
+		padding: 10px
+		display: inline-block
+		color: #f0f0f0
+		font-weight: normal
+		text-align: center
+		transform: translateX(-50%) translateY(-50%)
+		background: url(../section-bg.jpg) no-repeat
+		background-size: 200%
+		background-position: center center
+		position: relative
+		left: 50%
+		top: -20px
+
+
+
+	.historical-event
+		padding: 20px
+		margin: 0 0 20px 0
+		position: relative
+		// border: 1px solid darken($colors.white, 10%)
+		//background-color: $colors.white
+		background-repeat: no-repeat
+		background-size: 100%
+		background-position: center center
+		transition: background-size 1800ms ease-in-out
+
+		&:before
+			content: ''
+			width: 100%
+			height: 100%
+			position: absolute
+			top: 0
+			left: 0
+			transition: background-color 1200ms ease-in-out
+			background-color: alpha($colors.black, 0.38)
+
+		&:last-child
+			margin: 0
+
+		&:hover
+
+			&:before
+				background-color: alpha($colors.black, 0.0)
+
+			&-content
+				border-left: 6px solid #f92a2a
+
+		&-content
+			padding: 0px 10px
+			transition: border 1000ms ease-in-out
+			border-left: 2px solid #f92a2a
+			z-index: 2
+			position: relative
+
+
+		&-overline
+			display: none
+
+		&-bullet
+			width: 10px
+			height: 10px
+			display: block
+			border-radius: 50%
+			position: absolute
+			left: -15px
+			background: #f0f0f0
+			border: 1px solid #f92a2a
+
+		&-date
+			padding: 2px 6px
+			display: inline-block
+			color: #fff
+			font-size: 11px
+			text-transform: uppercase
+			background-color: #f92a2a
+
+		&-title
+			padding: 4px 0
+			display: block
+			color: #fff
+			font-size: 20px
+			text-transform: uppercase
+			text-shadow: #000 0 1px 1px
+
+		&-text
+			color: #a0a0a0
+			font-size: 12px
+
+		&-excerpt
+			color: #fff
+			font-size: 14px
+			text-shadow: #000 0 1px 1px
+
+
+		&-link
+			display: block
+			padding: 15px 0 10px 0
+			color: #fff
+			font-size: 16px
+			text-shadow: #000 0 1px 1px
+			text-transform: uppercase
