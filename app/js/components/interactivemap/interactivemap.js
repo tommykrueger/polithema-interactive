@@ -5,7 +5,7 @@ import EventTimeline from '../eventtimeline';
 
 import Fleet from '../../models/fleet';
 
-
+import Globe from '../globe';
 import MapDriver from './components/mapdriver';
 //import EventManager from './components/eventmanager';
 
@@ -96,6 +96,133 @@ export default class InteractiveMap extends Component {
 
     let $globeButton = $('<button class="globe-button">View Globe</button>');
     $(this.node).append($globeButton);
+
+    $globeButton.on('click', (e) => {
+      
+
+      this.globe = new Globe({
+        map: 'json/world-countries.json',
+        file: 'json/alcohol-worldwide.json',
+        color: {
+          domain: [100, 1000000, 20000000],
+          range: ["green", "yellow", "red"]
+        },
+        afterRender: function(){
+
+          // define the color ranges for the data series
+
+          this.colors = {
+            total: d3.scale
+              .linear()
+              .domain([0, 7.5, 10, 15])
+              .interpolate(d3.interpolateRgb)
+              .range(["#EED447", "#D29C50", "#C48A54", "#A66D55"]),
+              //.range(["#fff0f0", "#f09999", "#f06060", "#f02020"]),
+
+            /*
+            beer: d3.scale
+              .linear()
+              .domain([0, 5, 10, 15])
+              .interpolate(d3.interpolateRgb)
+              .range(["#EED447", "#D29C50", "#C48A54", "#A66D55"]),
+            */
+
+            beer: d3.scale
+              .linear()
+              .domain([0, 2, 4, 6, 8, 10, 12])
+              .interpolate(d3.interpolateRgb)
+              .range(["#F3F300", "#F3F300", "#DC9F00", "#CA8312", "#B86B20", "#8B4323", "#73301F"]),
+          }
+
+        },
+        draw: function() {
+
+          var self = this;
+
+          this.features = this.g.selectAll(".feature").data(this.countries.features);
+          this.features.enter().append("path")
+            .attr("class", "feature")
+            .attr("id", function(d){ return d.id.toLowerCase() })
+            .attr("country", function(d){ return d.properties.name.toLowerCase().replace(' ', ''); })
+            .attr("d", this.path)
+            .on("mouseover", function(d){
+
+              var html = d.properties.name;
+              var id = d3.select(this).attr('country');
+
+              if (d3.select('#mission-' + id)[0][0] != null) {
+                html = d3.select('#mission-' + id).html();
+              }
+
+              return self.tooltip.html(html).style("display", "block");
+            })
+            .on("mousemove", function(){
+              return self.tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+            })
+            .on("mouseout", function(){
+              return self.tooltip.style("display", "none");
+            });
+
+
+          // render the data
+          this.data.forEach(function(d) {
+
+            self.g.selectAll(".feature").each(function(){
+
+              var item = d3.select(this);
+              var id = item.attr('country');
+
+              var b = d.total * d.beer / 100;
+              var amount = self.colors['beer'](b);
+
+              if (id == d.country.toLowerCase().replace(' ', '')) {
+
+                item
+                  .classed('active', true)
+                  .attr("idd", d.id)
+                  .style('fill', amount);
+
+              }
+
+            });
+
+            // build the html tooltip
+            d3.select('body').append('div')
+              .attr('id', 'mission-' + d.country.toLowerCase().replace(' ', ''))
+              .attr('class', 'mission')
+              .html(function(){
+
+                var info = (d.d != undefined) ? ' ('+ d.d +')' : '';
+                var value_beer = (d.total * d.beer / 100).toFixed(2);
+                var value_wine = (d.total * d.wine / 100).toFixed(2);
+                var value_spirits = (d.total * d.spirits / 100).toFixed(2);
+
+                var html = '<div class="tooltip-header">'+ d.country + info + '</div>';
+                    html += '<div class="tooltip-content">';
+                    html += '<p class="mission-deaths">Alkoholverbrauch pro Jahr: '+ d.total +' Liter</p>';
+                    html += '<p class="mission-deaths">davon Bier: '+ d.beer +'% ('+ value_beer +' Liter)</p>';
+                    html += '<p class="mission-deaths">davon Wein: '+ d.wine +'% ('+ value_wine +' Liter)</p>';
+                    html += '<p class="mission-deaths">davon Hartes Zeug: '+ d.spirits +'% ('+ value_spirits +' Liter)</p>';
+                    html += '</div>';
+
+                return html;
+
+              });
+
+          });
+
+        },
+        redraw: function(){
+          var self = this;
+
+          this.features
+            .attr("d", this.path);
+        }
+      });
+      
+      this.globe.init();
+
+    });
 
   }
 
