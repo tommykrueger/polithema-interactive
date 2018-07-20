@@ -70,6 +70,9 @@ export default class InteractiveMap extends Component {
     // start the render loop
     // this.render();
 
+    this.$globeLayer = $('<div class="layer-globe"></div>');
+    $('body').append(this.$globeLayer);
+
     this.initEvents();
 
 
@@ -99,9 +102,10 @@ export default class InteractiveMap extends Component {
 
     $globeButton.on('click', (e) => {
       
+      this.$globeLayer.addClass('layer-globe--is-visible');
 
       this.globe = new Globe({
-        map: 'json/world-countries.json',
+        map: 'json/world-110m.json',
         file: 'json/alcohol-worldwide.json',
         color: {
           domain: [100, 1000000, 20000000],
@@ -137,87 +141,102 @@ export default class InteractiveMap extends Component {
         },
         draw: function() {
 
+          console.log('drawing', this.countries.objects.land);
+
           var self = this;
 
-          this.features = this.g.selectAll(".feature").data(this.countries.features);
-          this.features.enter().append("path")
-            .attr("class", "feature")
-            .attr("id", function(d){ return d.id.toLowerCase() })
-            .attr("country", function(d){ return d.properties.name.toLowerCase().replace(' ', ''); })
-            .attr("d", this.path)
-            .on("mouseover", function(d){
-
-              var html = d.properties.name;
-              var id = d3.select(this).attr('country');
-
-              if (d3.select('#mission-' + id)[0][0] != null) {
-                html = d3.select('#mission-' + id).html();
-              }
-
-              return self.tooltip.html(html).style("display", "block");
-            })
-            .on("mousemove", function(){
-              return self.tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
-            })
-            .on("mouseout", function(){
-              return self.tooltip.style("display", "none");
-            });
+          this.land = this.g
+            .insert("path", ".land")
+            .datum(topojson.feature(this.countries, this.countries.objects.land))
+            .attr("class", "land")
+            .attr("d", this.path);
 
 
-          // render the data
-          this.data.forEach(function(d) {
+          this.featureGroup = this.g.append('g').attr("class", "features");
 
-            self.g.selectAll(".feature").each(function(){
 
-              var item = d3.select(this);
-              var id = item.attr('country');
+          this.routeData = [[37.14928, -6.99775],
+            [28.116667, -17.233333],
+            [25.71733, -45.21767],
+            [27.55911, -47.40189],
+            [25.67340, -49.77493],
+            [27.20502, -67.77054],
+            [24.31628, -75.10941],
+            [23.26149, -74.91410],
+            [22.00410, -76.24177],
+            [22.22801, -77.20857],
+            [21.51433, -76.48347],
+            [20.36515, -73.07771],
+            [19.54446, -69.11606],
+            [20.97703, -67.63291],
+            [21.44816, -66.31455],
+            [21.08114, -66.21057],
+            [21.96008, -65.24377],
+            [22.02120, -63.55187],
+            [28.13679, -59.96922],
+            [29.59913, -50.47703],
+            [29.75186, -43.97312],
+            [31.75474, -49.21188],
+            [38.16749, -45.28633],
+            [38.30556, -32.80586],
+            [37.75172, -31.92696],
+            [36.20716, -26.56563],
+            [38.58092, -22.96211],
+            [37.71859, -16.61133],
+            [38.53575, -9.36902]];
 
-              var b = d.total * d.beer / 100;
-              var amount = self.colors['beer'](b);
 
-              if (id == d.country.toLowerCase().replace(' ', '')) {
 
-                item
-                  .classed('active', true)
-                  .attr("idd", d.id)
-                  .style('fill', amount);
+          this.routeData = this.arrayHelper.switchLatLonFromArray(this.routeData);
 
-              }
+          this.g
+            .append("path")
+            .datum({type: "LineString", coordinates: this.routeData})
+            .attr('class', 'route-path')
+            .attr('d', this.path);
 
-            });
 
-            // build the html tooltip
-            d3.select('body').append('div')
-              .attr('id', 'mission-' + d.country.toLowerCase().replace(' ', ''))
-              .attr('class', 'mission')
-              .html(function(){
+          this.routeData2 = [[35.71864, -7.42538],
+            [28.116667, -17.233333],
+            [-24.91633, -44.75006],
+            [-35.55988, -55.82256],
+            [-52.61556, -68.13515],
+            [-52.61556, -75.1664],
+            [13.29934, 144.71998],
+            [9.71007, 125.20595],
+            [9.34169, 124.28309],
+            [10.31593, 124.15126],
+            [8.60979, 117.91454],
+            [5.22934, 114.97021],
+            [-8.6002, 125.38765],
+            [-34.56503, 18.4142],
+            [15.92832, -23.59726]];
 
-                var info = (d.d != undefined) ? ' ('+ d.d +')' : '';
-                var value_beer = (d.total * d.beer / 100).toFixed(2);
-                var value_wine = (d.total * d.wine / 100).toFixed(2);
-                var value_spirits = (d.total * d.spirits / 100).toFixed(2);
 
-                var html = '<div class="tooltip-header">'+ d.country + info + '</div>';
-                    html += '<div class="tooltip-content">';
-                    html += '<p class="mission-deaths">Alkoholverbrauch pro Jahr: '+ d.total +' Liter</p>';
-                    html += '<p class="mission-deaths">davon Bier: '+ d.beer +'% ('+ value_beer +' Liter)</p>';
-                    html += '<p class="mission-deaths">davon Wein: '+ d.wine +'% ('+ value_wine +' Liter)</p>';
-                    html += '<p class="mission-deaths">davon Hartes Zeug: '+ d.spirits +'% ('+ value_spirits +' Liter)</p>';
-                    html += '</div>';
+          this.routeData2 = this.arrayHelper.switchLatLonFromArray(this.routeData2);
 
-                return html;
+          this.g
+            .append("path")
+            .datum({type: "LineString", coordinates: this.routeData2})
+            .attr('class', 'route-path2')
+            .attr('d', this.path);
 
-              });
-
-          });
 
         },
-        redraw: function(){
-          var self = this;
 
-          this.features
-            .attr("d", this.path);
+        redraw: function(){
+
+          this.land.attr("d", this.path);
+
+          d3.select('.route-path')
+            .attr('d', this.path);
+
+          d3.select('.route-path2')
+            .attr('d', this.path);
+
+        
         }
+
       });
       
       this.globe.init();

@@ -2,13 +2,14 @@ module.exports = {
   files: {
     javascripts: {
       joinTo: {
-        'js/vendor.js': /^(vendor)/,
+        'js/vendor.js': /^(?!app\/)/,
         'js/app.js': /^app/
       },
       order: {
         before: [
           'js/jquery-3.3.1.min.js',
           'js/d3.v3.min.js',
+          'js/topojson.v1.min.js',
           'js/Leaflet.Geodesic.js'
         ]
       }
@@ -16,11 +17,6 @@ module.exports = {
     stylesheets: {
       joinTo: {
         'css/app.css': /^app\/stylus\/app.styl/
-      },
-      order: {
-        before: [
-          'css/normalize.css'
-        ]
       }
     }
   },

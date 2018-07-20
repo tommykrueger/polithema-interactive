@@ -24,8 +24,8 @@ export default class Globe extends Component {
 
     this.options = Object.assign({}, this.defaults, options);
 
-    this.width = $(window).innerWidth;
-    this.height = $(window).innerHeight;
+    this.width = window.innerWidth * 0.9;
+    this.height = window.innerHeight * 0.9;
 
   }
   
@@ -52,8 +52,15 @@ export default class Globe extends Component {
     this.scale0 = this.projection.scale();
 
     this.path = d3.geo.path()
-        .projection(this.projection)
-        .pointRadius(2);
+      .projection(this.projection)
+      .pointRadius(2);
+
+
+    this.line = d3.svg.line()
+      .x((d) => { return this.projection([d[1], d[0]])[0]; })
+      .y((d) => { return this.projection([d[1], d[0]])[1]; })
+      .interpolate("monotone")
+      .tension(.0);
 
     this.scale0 = (this.width - 1) / 2 / Math.PI;
 
@@ -64,7 +71,7 @@ export default class Globe extends Component {
       .on("zoom", this.zoomed.bind(this));
 
 
-    this.svg = d3.select("body")
+    this.svg = d3.select(".layer-globe")
       .append("svg")
         .attr("width", this.width)
         .attr("height", this.height)
@@ -72,11 +79,11 @@ export default class Globe extends Component {
           .call(this.zoom.bind(this))
           .on("dblclick.zoom", null);
 
+
     this.svg.append("rect")
       .attr("class", "frame")
       .attr("width", this.width)
       .attr("height", this.height);
-
 
     this.backgroundCircle = this.svg.append("circle")
       .attr('cx', this.width / 2)
@@ -140,6 +147,14 @@ export default class Globe extends Component {
     }
 
     this.g = this.svg.append("g");
+
+
+    this.equator = this.g.append("path")
+      .datum({type: "LineString", coordinates: [[-180, 0], [-90, 0], [0, 0], [90, 0], [180, 0]]})
+      .attr("class", "equator")
+      .attr("d", this.path);
+
+
     this.features = [];
     this.rect;
     this.seazones;
@@ -198,31 +213,48 @@ export default class Globe extends Component {
   }
 
 
+  liner ( lines ) {
+
+    let linesPath = '';
+
+    for (var i=0; i<=lines.length; i++) {
+
+      if (lines[i] !== undefined && lines[i+1] !== undefined) {
+        let l = [lines[i], lines[i+1]];
+        linesPath += this.line(l);
+      }
+
+    }
+
+    return linesPath;
+
+  }
+
+
   load() {
 
-    var self = this;
+    var requestMap = fetch(this.options.map).then((response) => { 
+      return response.json();
+    });
 
-    queue()
-      .defer(d3.json, this.options.map)
-      .defer(d3.json, this.options.file)
-      .await(function(error, countries, data) {
+    /*
+    var requestData = fetch(this.options.file).then((response) => { 
+      return response.json();
+    });
+    */
 
-        if (error) {
-          console.log(error);
-        }
+    Promise.all([requestMap]).then((values) => {
 
-        self.countries = countries;
-        self.data = data;
-        self.render();
+      this.countries = values[0];
+      //this.data = values[1];
+      this.render();
 
-      });
+    });
 
   }
 
 
   render() {
-
-    var self = this;
 
     if ( typeof this.options.draw == 'function')
       this.options.draw.call(this);
@@ -265,6 +297,8 @@ export default class Globe extends Component {
     if ( typeof this.options.redraw == 'function')
       this.options.redraw.call(this);
 
+
+    this.equator.attr('d', this.path);
 
     this.graticules.attr("d", this.path);
 

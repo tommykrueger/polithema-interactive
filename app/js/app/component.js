@@ -1,4 +1,5 @@
 import Arithmetics from './arithmetics';
+import ArrayHelper from './arrayhelper';
 
 /**
  * Base Component Class
@@ -12,6 +13,7 @@ export default class Component {
 		this.node 	= options.node;
 
 		this.arithmetics = new Arithmetics();
+		this.arrayHelper = new ArrayHelper();
 
 	}
 

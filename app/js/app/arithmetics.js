@@ -3,7 +3,7 @@ export var __useDefault = true;
 /**
  * Utility class to be used for global functions
  */
-export default class Arithemics {
+export default class Arithemics { 
 
 	constructor() {}
 

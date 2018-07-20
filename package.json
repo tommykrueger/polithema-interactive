@@ -3,7 +3,7 @@
   "description": "The WordPress Theme for polithema.de",
   "author": "Tommy Krüger",
   "version": "0.0.1",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": "true",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "brunch watch --server",
-    "prod": "brunch build --production"
+    "production": "brunch build --production"
   },
   "dependencies": {},
   "devDependencies": {

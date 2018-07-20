@@ -19,6 +19,105 @@ path.leaflet-interactive
   stroke-dasharray: 12 8
 
 
+
+.layer-globe
+  display: none
+  width: 100%
+  height: 100%
+  z-index: 1000
+  overflow: hidden
+  position: fixed
+  left: 0
+  top: 0
+  background-color: $colors.black
+  border: 1px solid #d0d0d0
+  box-shadow: 0 0 10px alpha($colors.black, 0.25)
+
+  &--is-visible
+    display: block
+
+
+// svg globe definition
+.land
+  fill: #444
+  fill-opacity: 0.25
+
+.route-path
+.route-path2
+  fill: none
+  stroke: steelblue
+  stroke-width: 1.5px
+  stroke-linejoin: round
+  //stroke-dasharray: 6px 4px
+
+.route-path3
+  fill: #909090
+
+.equator
+  fill: none
+  stroke: $colors.black
+  stroke-width: 1px
+  stroke-opacity: 0.5
+  stroke-dasharray: 6px 2px
+
+
+#defs {
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.frame {
+  fill: none;
+  pointer-events: all;
+}
+
+.graticule {
+  fill: none;
+  stroke: #666;
+  stroke-width: .2px;
+}
+
+
+.area {
+  fill-opacity: 0.8;
+}
+.area:hover {
+  fill-opacity: 1.0;
+}
+
+.feature {
+  fill: #f0f0f0;
+  stroke: #666;
+  stroke-width: .5px;
+  transition: fill 100ms ease-in-out
+}
+
+.feature:hover {
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+
+.circle {
+  fill: #f0f0f0;
+  stroke: #909090;
+}
+
+
+.globe {
+  stroke: rgba(255, 255, 255, .5);
+  stroke-width: .25px;
+}
+
+.star {
+  fill: #fff;
+  stroke: rgba(255, 255, 255, .5);
+  stroke-width: .25px;
+}
+
+
+
 .globe-button
   font-weight: bold
   text-align: center

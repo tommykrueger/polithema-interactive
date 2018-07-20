@@ -4,10 +4,10 @@
 
 $article = isset($_GET['article']) ? (int)$_GET['article'] : false;
 
-if ($article < 10) {
+if ($article && $article < 10) {
   $article = '00' . $article;
 }
-elseif ($article < 100) {
+elseif ($article && $article < 100) {
   $article = '0' . $article;
 }
 
