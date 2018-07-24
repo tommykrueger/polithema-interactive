@@ -1,15 +1,17 @@
 {
   "name": "interactive.polithema.de",
-  "description": "The WordPress Theme for polithema.de",
+  "description": "Interactive Theme for polithema.de",
+  "url": "http://interaktiv.polithema.de",
   "author": "Tommy Krüger",
   "version": "0.0.1",
   "license": "MIT",
-  "private": "true",
+  "private": true,
   "repository": {
     "type": "git",
     "url": ""
   },
   "scripts": {
+    "watch": "brunch watch",
     "start": "brunch watch --server",
     "production": "brunch build --production"
   },

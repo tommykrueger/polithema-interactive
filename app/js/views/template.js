@@ -1,6 +1,6 @@
 import Utils from '../app/utils';
 
-export default class Template {
+export default class TTemplate {
 
 	constructor ( options = {} ) {
 

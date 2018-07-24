@@ -1,5 +1,7 @@
 import Component from '../app/component';
 
+import TestTemplate from '../templates/test.template';
+
 export default class Globe extends Component {
 
 
@@ -26,6 +28,9 @@ export default class Globe extends Component {
 
     this.width = window.innerWidth * 0.9;
     this.height = window.innerHeight * 0.9;
+
+    this.template = new TestTemplate({title: 'Jippi'});
+    console.log(this.template.render());
 
   }
   
@@ -196,7 +201,7 @@ export default class Globe extends Component {
 
   initControls() {
 
-    var self = this;
+    let self = this;
 
     d3.selectAll('.button')
       .on('click', function(e){
@@ -217,7 +222,7 @@ export default class Globe extends Component {
 
     let linesPath = '';
 
-    for (var i=0; i<=lines.length; i++) {
+    for (let i=0; i<=lines.length; i++) {
 
       if (lines[i] !== undefined && lines[i+1] !== undefined) {
         let l = [lines[i], lines[i+1]];
@@ -233,7 +238,7 @@ export default class Globe extends Component {
 
   load() {
 
-    var requestMap = fetch(this.options.map).then((response) => { 
+    let requestMap = fetch(this.options.map).then((response) => {
       return response.json();
     });
 
