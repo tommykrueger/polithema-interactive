@@ -1,6 +1,6 @@
 import Component from '../app/component';
 
-import TestTemplate from '../templates/test.template';
+// import TestTemplate from '../templates/test.template';
 
 export default class Globe extends Component {
 
@@ -26,11 +26,11 @@ export default class Globe extends Component {
 
     this.options = Object.assign({}, this.defaults, options);
 
-    this.width = window.innerWidth * 0.9;
-    this.height = window.innerHeight * 0.9;
+    this.width = $('.map-globe').width();
+    this.height = $('.map-globe').height();
 
-    this.template = new TestTemplate({title: 'Jippi'});
-    console.log(this.template.render());
+    //this.template = new TestTemplate({title: 'Jippi'});
+    //console.log(this.template.render());
 
   }
   
@@ -76,7 +76,7 @@ export default class Globe extends Component {
       .on("zoom", this.zoomed.bind(this));
 
 
-    this.svg = d3.select(".layer-globe")
+    this.svg = d3.select(".map-globe")
       .append("svg")
         .attr("width", this.width)
         .attr("height", this.height)
@@ -147,12 +147,23 @@ export default class Globe extends Component {
       .style("fill", "url(#globe_shading)");
 
 
+    this.globeMask = this.svg.append("defs")
+      .append("mask")
+      .attr("id", "myMask");
+
+
     if (this.options.graticules) {
       this.renderGraticules();
     }
 
     this.g = this.svg.append("g");
 
+
+    this.maskPath = this.globeMask.append("path")
+      .datum({type: "LineString", coordinates: [[-3, 40], [-0.1, 51], [35, 55], [46, 24]]})
+      .attr("class", "mask")
+      .attr('fill', '#ffffff')
+      .attr("d", this.path)
 
     this.equator = this.g.append("path")
       .datum({type: "LineString", coordinates: [[-180, 0], [-90, 0], [0, 0], [90, 0], [180, 0]]})
@@ -203,6 +214,7 @@ export default class Globe extends Component {
 
     let self = this;
 
+    /*
     d3.selectAll('.button')
       .on('click', function(e){
 
@@ -214,6 +226,11 @@ export default class Globe extends Component {
         self.currentProjection = d3.select(this).attr('data-action');
 
       });
+      */
+
+    this.svg.on("mousedown.log", function() {
+      console.log(self.projections.orthographic.invert(d3.mouse(this)));
+    });
 
   }
 
@@ -303,6 +320,7 @@ export default class Globe extends Component {
       this.options.redraw.call(this);
 
 
+    this.maskPath.attr('d', this.path);
     this.equator.attr('d', this.path);
 
     this.graticules.attr("d", this.path);

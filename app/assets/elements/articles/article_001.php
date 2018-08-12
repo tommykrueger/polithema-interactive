@@ -7,6 +7,7 @@
 
     <div id="map-interactive" 
       data-component="InteractiveMap" 
+      data-scenario="1"
       data-json='<?php echo json_encode($scenario) ?>'>
       
     </div>
@@ -50,7 +51,17 @@
           <div class="timeline-event-text">
 
             <p>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+              Es gibt viele Mythen die sich um die Person Christoph Kolumbus bis heute halten. Auch in den Schulen 
+              wird die Rolle Christoph Kolumbus innerhalb der Geschichte oft falsch dargestellt.
+              Kolumbus war Zeit seines Lebens mit Sicherheit nicht der nette freundliche Entdecker der die Welt in eine bessere Zeit führen wollte.
+              Er war ein besessener Eroberer. Mitunter war ihm jedes Mittel Recht sein Ziel zu erreichen.
+              Als Gouveneur der neu entdeckten Inseln in der Karibik zeigte er seine Unfähigkeit Politik zu betreiben.
+              Die Gier nach Gold und Reichtum trieben ihn beinahe in den vollständigen Ruin.
+            </p>
+
+            <p>
+              Die Eroberung der Neuen Welt war für die Einheimische Bevölkerung kein Segen sondern. Spanische und Portugisische
+              Eroberer die nach Kolumbus nach Kolumbus. die letztendlich zur vollständigen Eroberung Mittel- und Südam 
             </p>
 
             <p>

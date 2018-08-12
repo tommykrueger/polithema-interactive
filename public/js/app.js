@@ -581,6 +581,72 @@ var Model = function () {
 exports.default = Model;
 });
 
+;require.register("js/app/template.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Template = function () {
+  function Template() {
+    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Template);
+
+    this.data = data;
+    this._template = null;
+
+    if (data) this.render();
+  }
+
+  _createClass(Template, [{
+    key: "setData",
+    value: function setData() {
+      var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+
+      this.data = data;
+    }
+  }, {
+    key: "template",
+    value: function template() {
+
+      var data = this.data;
+    }
+  }, {
+    key: "getTemplate",
+    value: function getTemplate() {
+
+      return this._template;
+    }
+
+    /**
+     * Inject the template with data
+     */
+
+  }, {
+    key: "render",
+    value: function render() {
+
+      if (this.data) {
+
+        this.template();
+        return this.getTemplate();
+      }
+    }
+  }]);
+
+  return Template;
+}();
+
+exports.default = Template;
+});
+
 ;require.register("js/app/utils.js", function(exports, require, module) {
 'use strict';
 
@@ -1199,6 +1265,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// import TestTemplate from '../templates/test.template';
+
 var Globe = function (_Component) {
   _inherits(Globe, _Component);
 
@@ -1226,8 +1294,11 @@ var Globe = function (_Component) {
 
     _this.options = Object.assign({}, _this.defaults, options);
 
-    _this.width = window.innerWidth * 0.9;
-    _this.height = window.innerHeight * 0.9;
+    _this.width = $('.map-globe').width();
+    _this.height = $('.map-globe').height();
+
+    //this.template = new TestTemplate({title: 'Jippi'});
+    //console.log(this.template.render());
 
     return _this;
   }
@@ -1260,7 +1331,7 @@ var Globe = function (_Component) {
 
       this.zoom = d3.behavior.zoom().translate([this.width / 2, this.height / 2]).scale(this.projection.scale()).scaleExtent([this.scale0, 4 * this.scale0]).on("zoom", this.zoomed.bind(this));
 
-      this.svg = d3.select(".layer-globe").append("svg").attr("width", this.width).attr("height", this.height).append("g").call(this.zoom.bind(this)).on("dblclick.zoom", null);
+      this.svg = d3.select(".map-globe").append("svg").attr("width", this.width).attr("height", this.height).append("g").call(this.zoom.bind(this)).on("dblclick.zoom", null);
 
       this.svg.append("rect").attr("class", "frame").attr("width", this.width).attr("height", this.height);
 
@@ -1285,11 +1356,15 @@ var Globe = function (_Component) {
 
       this.globeShadingCircle = this.svg.append("circle").attr("cx", this.width / 2).attr("cy", this.height / 2).attr("r", this.projection.scale()).attr("class", "noclicks").style("fill", "url(#globe_shading)");
 
+      this.globeMask = this.svg.append("defs").append("mask").attr("id", "myMask");
+
       if (this.options.graticules) {
         this.renderGraticules();
       }
 
       this.g = this.svg.append("g");
+
+      this.maskPath = this.globeMask.append("path").datum({ type: "LineString", coordinates: [[-3, 40], [-0.1, 51], [35, 55], [46, 24]] }).attr("class", "mask").attr('fill', '#ffffff').attr("d", this.path);
 
       this.equator = this.g.append("path").datum({ type: "LineString", coordinates: [[-180, 0], [-90, 0], [0, 0], [90, 0], [180, 0]] }).attr("class", "equator").attr("d", this.path);
 
@@ -1325,14 +1400,19 @@ var Globe = function (_Component) {
 
       var self = this;
 
-      d3.selectAll('.button').on('click', function (e) {
+      /*
+      d3.selectAll('.button')
+        .on('click', function(e){
+           self.projection = self.projections[ d3.select(this).attr('data-action') ];
+          self.path = d3.geo.path().projection(self.projection).pointRadius(2);
+          self.svg.call(self.zoom);
+          self.redraw();
+           self.currentProjection = d3.select(this).attr('data-action');
+         });
+        */
 
-        self.projection = self.projections[d3.select(this).attr('data-action')];
-        self.path = d3.geo.path().projection(self.projection).pointRadius(2);
-        self.svg.call(self.zoom);
-        self.redraw();
-
-        self.currentProjection = d3.select(this).attr('data-action');
+      this.svg.on("mousedown.log", function () {
+        console.log(self.projections.orthographic.invert(d3.mouse(this)));
       });
     }
   }, {
@@ -1406,6 +1486,7 @@ var Globe = function (_Component) {
 
       if (typeof this.options.redraw == 'function') this.options.redraw.call(this);
 
+      this.maskPath.attr('d', this.path);
       this.equator.attr('d', this.path);
 
       this.graticules.attr("d", this.path);
@@ -1440,6 +1521,10 @@ var _interactivemap = require('./interactivemap');
 
 var _interactivemap2 = _interopRequireDefault(_interactivemap);
 
+var _mapeditor = require('./mapeditor');
+
+var _mapeditor2 = _interopRequireDefault(_mapeditor);
+
 var _test = require('./test');
 
 var _test2 = _interopRequireDefault(_test);
@@ -1449,6 +1534,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = {
 
   InteractiveMap: _interactivemap2.default,
+  MapEditor: _mapeditor2.default,
   Test: _test2.default
 
 };
@@ -1632,6 +1718,10 @@ var InteractiveMap = function (_Component) {
 
     };
 
+    _this.datasetColors = ['#ce0000', '#00ce00', '#cece00', '#0000ce'];
+
+    _this.isViewToggled = false;
+
     _this.fleets = [];
 
     // 1.0, 2.0, 3.0
@@ -1640,9 +1730,18 @@ var InteractiveMap = function (_Component) {
     _this.stateRunning = true;
 
     _this.$map = $('#map-interactive');
+    _this.$mapLeaflet = $('<div class="map-leaflet" id="map-leaflet"></div>');
+    _this.$mapGlobe = $('<div class="map-globe" id="map-globe"></div>');
+
+    _this.$map.append(_this.$mapLeaflet);
+    _this.$map.append(_this.$mapGlobe);
+
     _this.data = _this.$map.data('json');
 
     console.log(_this.data);
+
+    _this.scenario = _this.$map.data('scenario');
+    _this.loadScenario();
 
     /*
     this.eventTimeline = new EventTimeline({
@@ -1668,13 +1767,23 @@ var InteractiveMap = function (_Component) {
     _this.registerWaypoints();
     _this.registerEvents();
 
+    _this.addDataSeries();
+
     // start the render loop
     // this.render();
 
-    _this.$globeLayer = $('<div class="layer-globe"></div>');
-    $('body').append(_this.$globeLayer);
+    _this.$globeLayer = _this.$mapGlobe;
+    //$(this.node).before(this.$globeLayer);
 
-    _this.initEvents();
+    _this.init();
+    // this.initEvents();
+
+
+    //this.$mapLeaflet.append('<img class="image-overlay" src="img/Columbus_first_voyage.jpg">');
+
+    // 2 = editor mode
+    //this.mode = 2;
+
 
     return _this;
   }
@@ -1687,91 +1796,78 @@ var InteractiveMap = function (_Component) {
       this.setMapZoom(this.data.map.zoom);
     }
   }, {
+    key: 'loadScenario',
+    value: function loadScenario() {
+
+      $.ajax({
+        url: '../server/',
+        data: {
+          model: 'scenario',
+          action: 'get',
+          id: 1
+        },
+        dataType: 'json',
+        success: function success(d) {
+
+          console.log(d);
+          //this.datasets = d.data;
+          //this.renderDatasets(d.data);
+        }
+
+      });
+    }
+  }, {
     key: 'init',
     value: function init() {
+      var _this2 = this;
 
       this.initEvents();
+
+      setTimeout(function () {
+
+        _this2.initGlobe();
+      }, 1000);
     }
   }, {
     key: 'initEvents',
     value: function initEvents() {
-      var _this2 = this;
+      var _this3 = this;
 
-      var $globeButton = $('<button class="globe-button">View Globe</button>');
-      $(this.node).append($globeButton);
+      var colors = this.datasetColors;
 
-      $globeButton.on('click', function (e) {
+      this.$template = $('\n      \n        <div class="map-views">\n          <span class="button button-play" title="Start Interactive Map Animation">Play</span>\n          <span class="button button-2d is-active" title="View map as a mercator projection">2D</span>\n          <span class="button button-3d" title="View map as an orthographic projection">3D</span>\n        </div>\n        <div class="map-legend">\n          ' + this.data.series.map(function (d, i) {
+        return '<span class="dataset"><span style="background-color:' + colors[i] + ';"></span>' + d.name + '</span>';
+      }).join(" ") + '\n        </div>\n      \n    ');
 
-        _this2.$globeLayer.addClass('layer-globe--is-visible');
+      $(this.node).append(this.$template);
 
-        _this2.globe = new _globe2.default({
-          map: 'json/world-110m.json',
-          file: 'json/alcohol-worldwide.json',
-          color: {
-            domain: [100, 1000000, 20000000],
-            range: ["green", "yellow", "red"]
-          },
-          afterRender: function afterRender() {
+      //let $globeButton = $('<button class="globe-button">View Globe</button>');
+      //$(this.node).append($globeButton);
 
-            // define the color ranges for the data series
+      // this.$template.find('.button-3d')
+      this.$template.find('.button-3d').on('click', function (e) {
 
-            this.colors = {
-              total: d3.scale.linear().domain([0, 7.5, 10, 15]).interpolate(d3.interpolateRgb).range(["#EED447", "#D29C50", "#C48A54", "#A66D55"]),
-              //.range(["#fff0f0", "#f09999", "#f06060", "#f02020"]),
+        _this3.$mapGlobe.show();
+        _this3.$mapLeaflet.hide();
 
-              /*
-              beer: d3.scale
-                .linear()
-                .domain([0, 5, 10, 15])
-                .interpolate(d3.interpolateRgb)
-                .range(["#EED447", "#D29C50", "#C48A54", "#A66D55"]),
-              */
+        _this3.isViewToggled = !_this3.isViewToggled;
 
-              beer: d3.scale.linear().domain([0, 2, 4, 6, 8, 10, 12]).interpolate(d3.interpolateRgb).range(["#F3F300", "#F3F300", "#DC9F00", "#CA8312", "#B86B20", "#8B4323", "#73301F"])
-            };
-          },
-          draw: function draw() {
+        if (_this3.isViewToggled) {
 
-            console.log('drawing', this.countries.objects.land);
+          _this3.$mapGlobe.show();
+          _this3.$mapLeaflet.hide();
+        } else {
 
-            var self = this;
-
-            this.land = this.g.insert("path", ".land").datum(topojson.feature(this.countries, this.countries.objects.land)).attr("class", "land").attr("d", this.path);
-
-            this.featureGroup = this.g.append('g').attr("class", "features");
-
-            this.routeData = [[37.14928, -6.99775], [28.116667, -17.233333], [25.71733, -45.21767], [27.55911, -47.40189], [25.67340, -49.77493], [27.20502, -67.77054], [24.31628, -75.10941], [23.26149, -74.91410], [22.00410, -76.24177], [22.22801, -77.20857], [21.51433, -76.48347], [20.36515, -73.07771], [19.54446, -69.11606], [20.97703, -67.63291], [21.44816, -66.31455], [21.08114, -66.21057], [21.96008, -65.24377], [22.02120, -63.55187], [28.13679, -59.96922], [29.59913, -50.47703], [29.75186, -43.97312], [31.75474, -49.21188], [38.16749, -45.28633], [38.30556, -32.80586], [37.75172, -31.92696], [36.20716, -26.56563], [38.58092, -22.96211], [37.71859, -16.61133], [38.53575, -9.36902]];
-
-            this.routeData = this.arrayHelper.switchLatLonFromArray(this.routeData);
-
-            this.g.append("path").datum({ type: "LineString", coordinates: this.routeData }).attr('class', 'route-path').attr('d', this.path);
-
-            this.routeData2 = [[35.71864, -7.42538], [28.116667, -17.233333], [-24.91633, -44.75006], [-35.55988, -55.82256], [-52.61556, -68.13515], [-52.61556, -75.1664], [13.29934, 144.71998], [9.71007, 125.20595], [9.34169, 124.28309], [10.31593, 124.15126], [8.60979, 117.91454], [5.22934, 114.97021], [-8.6002, 125.38765], [-34.56503, 18.4142], [15.92832, -23.59726]];
-
-            this.routeData2 = this.arrayHelper.switchLatLonFromArray(this.routeData2);
-
-            this.g.append("path").datum({ type: "LineString", coordinates: this.routeData2 }).attr('class', 'route-path2').attr('d', this.path);
-          },
-
-          redraw: function redraw() {
-
-            this.land.attr("d", this.path);
-
-            d3.select('.route-path').attr('d', this.path);
-
-            d3.select('.route-path2').attr('d', this.path);
-          }
-
-        });
-
-        _this2.globe.init();
+          _this3.$mapGlobe.hide();
+          _this3.$mapLeaflet.show();
+        }
       });
     }
   }, {
     key: 'initMap',
     value: function initMap() {
 
-      this.map = L.map('map-interactive', { worldCopyJump: true }).setView(this.getCenter(), this.getZoom());
+      this.map = L.map('map-leaflet', { worldCopyJump: true }).setView(this.getCenter(), this.getZoom());
 
       L.tileLayer(this.MapDriver.get('worldoceanbase').url, {
         maxZoom: 12,
@@ -1782,6 +1878,7 @@ var InteractiveMap = function (_Component) {
 
       this.map.locate({ setView: true, maxZoom: 5 });
 
+      /*
       var marker = L.divIcon({
         iconSize: [30, 30],
         iconAnchor: [10, 10],
@@ -1789,11 +1886,109 @@ var InteractiveMap = function (_Component) {
         shadowSize: [0, 0],
         className: 'animated-icon my-icon-id'
       });
+      */
 
       this.map.on('click', function (e) {
         var latlon = [parseFloat(e.latlng.lat.toFixed(5)), parseFloat(e.latlng.lng.toFixed(5))];
         console.log(latlon);
       });
+
+      if (this.data.countries) {
+
+        var country = this.data.countries[0];
+
+        L.geoJSON(country.geometry, {
+          style: {
+            "color": "#15830B",
+            "weight": 5,
+            "opacity": 0.8
+          }
+        }).addTo(this.map);
+      }
+    }
+  }, {
+    key: 'initGlobe',
+    value: function initGlobe() {
+
+      this.globe = new _globe2.default({
+        map: 'json/world-110m.json',
+        //file: 'json/alcohol-worldwide.json',
+        color: {
+          domain: [100, 1000000, 20000000],
+          range: ["green", "yellow", "red"]
+        },
+        afterRender: function afterRender() {
+
+          // define the color ranges for the data series
+
+          this.colors = {
+            total: d3.scale.linear().domain([0, 7.5, 10, 15]).interpolate(d3.interpolateRgb).range(["#EED447", "#D29C50", "#C48A54", "#A66D55"]),
+            //.range(["#fff0f0", "#f09999", "#f06060", "#f02020"]),
+
+            beer: d3.scale.linear().domain([0, 2, 4, 6, 8, 10, 12]).interpolate(d3.interpolateRgb).range(["#F3F300", "#F3F300", "#DC9F00", "#CA8312", "#B86B20", "#8B4323", "#73301F"])
+          };
+        },
+        draw: function draw() {
+
+          console.log('drawing', this.countries.objects.land);
+
+          var self = this;
+
+          this.land = this.g.insert("path", ".land").datum(topojson.feature(this.countries, this.countries.objects.land)).attr("class", "land")
+          //.attr('mask', 'url(#myMask)')
+          .attr("d", this.path);
+
+          var country = { "type": "Feature", "properties": { "name": "Portugal" }, "geometry": { "type": "Polygon", "coordinates": [[[-9.034818, 41.880571], [-8.671946, 42.134689], [-8.263857, 42.280469], [-8.013175, 41.790886], [-7.422513, 41.792075], [-7.251309, 41.918346], [-6.668606, 41.883387], [-6.389088, 41.381815], [-6.851127, 41.111083], [-6.86402, 40.330872], [-7.026413, 40.184524], [-7.066592, 39.711892], [-7.498632, 39.629571], [-7.098037, 39.030073], [-7.374092, 38.373059], [-7.029281, 38.075764], [-7.166508, 37.803894], [-7.537105, 37.428904], [-7.453726, 37.097788], [-7.855613, 36.838269], [-8.382816, 36.97888], [-8.898857, 36.868809], [-8.746101, 37.651346], [-8.839998, 38.266243], [-9.287464, 38.358486], [-9.526571, 38.737429], [-9.446989, 39.392066], [-9.048305, 39.755093], [-8.977353, 40.159306], [-8.768684, 40.760639], [-8.790853, 41.184334], [-8.990789, 41.543459], [-9.034818, 41.880571]]] }, "id": "PRT" };
+
+          this.country = this.g.insert("path", ".country").datum(country.geometry).attr("class", "country").attr('mask', 'url(#myMask)').attr("d", this.path);
+
+          this.featureGroup = this.g.append('g').attr("class", "features");
+
+          this.routeData = [[37.14928, -6.99775], [28.116667, -17.233333], [25.71733, -45.21767], [27.55911, -47.40189], [25.67340, -49.77493], [27.20502, -67.77054], [24.31628, -75.10941], [23.26149, -74.91410], [22.00410, -76.24177], [22.22801, -77.20857], [21.51433, -76.48347], [20.36515, -73.07771], [19.54446, -69.11606], [20.97703, -67.63291], [21.44816, -66.31455], [21.08114, -66.21057], [21.96008, -65.24377], [22.02120, -63.55187], [28.13679, -59.96922], [29.59913, -50.47703], [29.75186, -43.97312], [31.75474, -49.21188], [38.16749, -45.28633], [38.30556, -32.80586], [37.75172, -31.92696], [36.20716, -26.56563], [38.58092, -22.96211], [37.71859, -16.61133], [38.53575, -9.36902]];
+
+          this.routeData = this.arrayHelper.switchLatLonFromArray(this.routeData);
+
+          this.g.append("path").datum({ type: "LineString", coordinates: this.routeData }).attr('class', 'route-path').attr('d', this.path);
+
+          /*
+          this.routeData2 = [[35.71864, -7.42538],
+            [28.116667, -17.233333],
+            [-24.91633, -44.75006],
+            [-35.55988, -55.82256],
+            [-52.61556, -68.13515],
+            [-52.61556, -75.1664],
+            [13.29934, 144.71998],
+            [9.71007, 125.20595],
+            [9.34169, 124.28309],
+            [10.31593, 124.15126],
+            [8.60979, 117.91454],
+            [5.22934, 114.97021],
+            [-8.6002, 125.38765],
+            [-34.56503, 18.4142],
+            [15.92832, -23.59726]];
+            this.routeData2 = this.arrayHelper.switchLatLonFromArray(this.routeData2);
+           this.g
+            .append("path")
+            .datum({type: "LineString", coordinates: this.routeData2})
+            .attr('class', 'route-path2')
+            .attr('d', this.path);
+            */
+        },
+
+        redraw: function redraw() {
+
+          this.land.attr("d", this.path);
+
+          this.country.attr("d", this.path);
+
+          d3.select('.route-path').attr('d', this.path);
+
+          //d3.select('.route-path2').attr('d', this.path);
+        }
+
+      });
+
+      this.globe.init();
     }
 
     // private map logic function
@@ -1829,9 +2024,42 @@ var InteractiveMap = function (_Component) {
       return this.data.zoom;
     }
   }, {
+    key: 'addDataSeries',
+    value: function addDataSeries() {
+      var _this4 = this;
+
+      var colors = this.datasetColors;
+
+      if (this.data.series === undefined || !this.data.series.length) {
+        console.warn('This interactive map does not have any data series defined');
+        return false;
+      }
+
+      this.data.series.forEach(function (serie, i) {
+
+        console.log(serie, i);
+
+        if (serie.route) {
+
+          var polyline = L.polyline([serie.route], {
+            color: colors[i],
+            weight: 4,
+            opacity: 1.0,
+            dashArray: '4,4',
+            lineJoin: 'round',
+            smoothFactor: 10
+          }).addTo(_this4.map);
+
+          // let animatedMarker = L.animatedMarker(polyline.getLatLngs()).addTo(this.map);
+        }
+      });
+
+      var marker2 = L.Marker.movingMarker(this.data.series[0].route, [3000, 2000, 5000, 3000], { autostart: true }).addTo(this.map);
+    }
+  }, {
     key: 'registerFleets',
     value: function registerFleets() {
-      var _this3 = this;
+      var _this5 = this;
 
       if (this.data.events === undefined || !this.data.events.length) {
         console.warn('This interactive map does not have any units defined');
@@ -1845,7 +2073,7 @@ var InteractiveMap = function (_Component) {
         } else {
 
           var f = new _fleet2.default(fleet);
-          _this3.fleets.push(f);
+          _this5.fleets.push(f);
 
           var wp = [];
 
@@ -1868,7 +2096,7 @@ var InteractiveMap = function (_Component) {
             dashArray: '4,4',
             lineJoin: 'round',
             smoothFactor: 10
-          }).addTo(_this3.map);
+          }).addTo(_this5.map);
 
           L.polylineDecorator(wp, {
             patterns: [{
@@ -1884,7 +2112,7 @@ var InteractiveMap = function (_Component) {
                 }
               })
             }]
-          }).addTo(_this3.map);
+          }).addTo(_this5.map);
         }
       });
     }
@@ -1896,7 +2124,7 @@ var InteractiveMap = function (_Component) {
 
       if (!this.data.voyage.waypoints.length) {
 
-        console.warn('This interactive map does not have any events defined');
+        console.warn('This interactive map does not have any waypoints defined');
         return false;
       }
 
@@ -1944,7 +2172,7 @@ var InteractiveMap = function (_Component) {
   }, {
     key: 'registerEvents',
     value: function registerEvents() {
-      var _this4 = this;
+      var _this6 = this;
 
       if (this.data.events === undefined) return;
 
@@ -1961,15 +2189,22 @@ var InteractiveMap = function (_Component) {
           console.warn('The event ' + event.name + ' does not have any location');
         } else {
 
-          var marker = L.marker(event.location).addTo(_this4.map);
+          var divIcon = L.divIcon({ className: 'mapicon-event' });
+
+          var marker = L.marker(event.location, { icon: divIcon, draggable: true }).addTo(_this6.map);
           marker.bindPopup("<b>" + event.name + "</b><br>" + event.date + "" + event.text + "");
+
+          marker.on('dragend', function (e) {
+            var position = marker.getLatLng();
+            console.log(position);
+          });
         }
       });
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this7 = this;
 
       var startTime = null,
           isRunning = false,
@@ -2005,10 +2240,10 @@ var InteractiveMap = function (_Component) {
       // tFrame = time in ms since timer start
       this.timer = d3.timer(function (tFrame) {
 
-        if (_this5.stateRunning) {
+        if (_this7.stateRunning) {
 
           // the time in ms per tick (ideally 17ms max (1000/60))
-          dtFrame = (tFrame - tFrameOld) * _this5.speed;
+          dtFrame = (tFrame - tFrameOld) * _this7.speed;
           tFrameOld = tFrame;
 
           // elapsed time in milliseconds since game start
@@ -2019,24 +2254,24 @@ var InteractiveMap = function (_Component) {
 
           // check if a new event has occured
 
-          _this5.fleets.forEach(function (fleet) {
+          _this7.fleets.forEach(function (fleet) {
             fleet.update(dtFrame);
           });
 
           // process calculation after every second
-          if (_this5.secondsElapsed != Math.round(timeElapsed / 1000)) {
+          if (_this7.secondsElapsed != Math.round(timeElapsed / 1000)) {
 
             console.log('calculate per second');
-            _this5.secondsElapsed++;
-            _this5.frameCount = 0;
+            _this7.secondsElapsed++;
+            _this7.frameCount = 0;
           }
 
-          _this5.datetime.update(deltaElapsed);
+          _this7.datetime.update(deltaElapsed);
 
-          _this5.counter++;
+          _this7.counter++;
 
           // print this every second frame only
-          if (_this5.counter % 100 == 0) {
+          if (_this7.counter % 100 == 0) {
 
             step++;
 
@@ -2051,7 +2286,7 @@ var InteractiveMap = function (_Component) {
             //this.components.map.drawLine(start, endStep);
           }
 
-          _this5.elapsed = Date.now();
+          _this7.elapsed = Date.now();
 
           // let dt = this.elapsed - this.startDate;
           // this.startDate = this.elapsed;
@@ -2059,7 +2294,7 @@ var InteractiveMap = function (_Component) {
 
           // this.elapsedTime = (new Date(this.elapsed)).getSeconds();
 
-          _this5.frameCount++;
+          _this7.frameCount++;
         }
 
         // the game is not running
@@ -2080,6 +2315,432 @@ var InteractiveMap = function (_Component) {
 }(_component2.default);
 
 exports.default = InteractiveMap;
+});
+
+;require.register("js/components/interactivemap/map.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Map = function () {
+  function Map() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Map);
+
+    console.log(options);
+
+    this.dataSeries = [];
+  }
+
+  _createClass(Map, [{
+    key: "addDataSeries",
+    value: function addDataSeries() {}
+  }]);
+
+  return Map;
+}();
+
+exports.default = Map;
+});
+
+;require.register("js/components/mapeditor.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _component = require('../app/component');
+
+var _component2 = _interopRequireDefault(_component);
+
+var _datetime = require('./datetime');
+
+var _datetime2 = _interopRequireDefault(_datetime);
+
+var _mapdriver = require('./interactivemap/components/mapdriver');
+
+var _mapdriver2 = _interopRequireDefault(_mapdriver);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapEditor = function (_Component) {
+  _inherits(MapEditor, _Component);
+
+  function MapEditor() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, MapEditor);
+
+    var _this = _possibleConstructorReturn(this, (MapEditor.__proto__ || Object.getPrototypeOf(MapEditor)).call(this, options));
+
+    _this.MapDriver = new _mapdriver2.default();
+    _this.MapDriver.init();
+
+    _this.config = {
+
+      // define if this map view is interactive or not
+      interactive: true,
+      center: [37.25, -6.95],
+      zoom: 5
+
+    };
+
+    _this.$mapLeaflet = $('<div class="map-leaflet" id="map-leaflet"></div>');
+    _this.$editorControls = $('<div class="mapeditor-controls"></div>');
+
+    _this.$map = $('#mapeditor');
+    _this.$map.append(_this.$mapLeaflet);
+    _this.$map.append(_this.$editorControls);
+
+    _this.data = _this.$map.data('json') || {};
+    _this.data = Object.assign(_this.config, _this.data);
+
+    _this.datetime = new _datetime2.default();
+    _this.datetime.setStartDate(_this.data.start);
+
+    _this._mode = false;
+
+    _this.polyline = false;
+
+    // holds all routes => there should be only one route
+    _this.routes = [];
+
+    // holds all markers registered for the editor
+    _this.markers = [];
+
+    _this.datasets = [];
+
+    _this.populateMapData();
+
+    _this.loadDataSets();
+
+    _this.initMap();
+    _this.init();
+
+    return _this;
+  }
+
+  _createClass(MapEditor, [{
+    key: 'populateMapData',
+    value: function populateMapData() {
+
+      //this.setMapCenter(this.data.map.center);
+      //this.setMapZoom(this.data.map.zoom);
+
+    }
+  }, {
+    key: 'loadDataSets',
+    value: function loadDataSets() {
+      var _this2 = this;
+
+      $.ajax({
+        url: '../server/',
+        data: {
+          model: 'dataset',
+          action: 'getAll'
+        },
+        dataType: 'json',
+        success: function success(d) {
+
+          console.log(d);
+          _this2.datasets = d.data;
+          _this2.renderDatasets(d.data);
+        }
+
+      });
+    }
+  }, {
+    key: 'renderDatasets',
+    value: function renderDatasets(data) {
+      var _this3 = this;
+
+      var $dropdown = $('<select name="datasets"></select>');
+
+      $dropdown.append('<option>Choose</option>');
+
+      data.forEach(function (d) {
+
+        var $option = $('<option value="' + d.id + '">' + d.name + '</option>');
+        $dropdown.append($option);
+      });
+
+      this.$editorControls.append($dropdown);
+
+      $dropdown.on('change', function (e) {
+
+        var val = $(e.currentTarget).find(":checked").val();
+
+        if (val) {
+          var dataset = _this3.datasets.filter(function (d) {
+            return d.id == val;
+          });
+          console.log(dataset[0]);
+          _this3.addDatasetToMap(dataset[0]);
+        }
+      });
+    }
+  }, {
+    key: 'saveDataset',
+    value: function saveDataset() {
+
+      var route = this.getMarkerPositions();
+
+      if (!route.length) {
+        route = [[37.08895, -6.84101], [28.25694, -17.34166], [28.10236, -17.35936], [22.56652, -73.60641], [22.47156, -72.32549], [22.48171, -73.39116], [22.50201, -73.5999]];
+      }
+
+      console.log(route);
+
+      $.ajax({
+        url: '../server/',
+        data: {
+          model: 'dataset',
+          action: 'save',
+          id: '123',
+          data: {
+            id: 123,
+            name: 'First Voyage',
+            route: route
+          }
+        },
+        dataType: 'json',
+        success: function success(d) {
+          console.log(d);
+        }
+
+      });
+    }
+  }, {
+    key: 'addDatasetToMap',
+    value: function addDatasetToMap(dataset) {
+      var _this4 = this;
+
+      dataset.route.forEach(function (route) {
+        _this4.addMarker(route);
+      });
+    }
+  }, {
+    key: 'init',
+    value: function init() {
+
+      this.initEvents();
+    }
+  }, {
+    key: 'initEvents',
+    value: function initEvents() {
+      var _this5 = this;
+
+      // Add Editor Buttons
+
+      this.buttonAddRoute = $('<button class="button button-add-route">New Route</button>');
+
+      this.buttonAddRoute.on('click', function (e) {
+
+        $(e.currentTarget).toggleClass('is-active');
+
+        _this5._mode = 'add-route';
+        //this.showEditorInforText( 'add-route' );
+      });
+
+      this.$editorControls.append(this.buttonAddRoute);
+
+      this.buttonAddMarker = $('<button class="button button-add-marker">Add Marker</button>');
+
+      this.buttonAddMarker.on('click', function (e) {
+
+        $(e.currentTarget).toggleClass('is-active');
+
+        _this5._mode = 'add-marker';
+        //this.showEditorInforText( 'add-marker' );
+      });
+
+      this.$editorControls.append(this.buttonAddMarker);
+
+      this.buttonGetData = $('<button class="button button-add-marker">Get Route Data</button>');
+
+      this.buttonGetData.on('click', function (e) {
+
+        var positions = _this5.getMarkerPositions();
+
+        var string = '';
+
+        positions.forEach(function (pos) {
+
+          string += '[' + pos[0].toFixed(5) + ',' + pos[1].toFixed(5) + '],';
+        });
+
+        alert(string);
+        // this.showDataWindow(string);
+      });
+
+      this.$editorControls.append(this.buttonGetData);
+
+      this.buttonSaveData = $('<button class="button button-save-dataset">Save Dataset</button>');
+
+      this.buttonSaveData.on('click', function (e) {
+
+        _this5.saveDataset();
+      });
+
+      this.$editorControls.append(this.buttonSaveData);
+
+      this.map.on('click', function (e) {
+
+        var location = [parseFloat(e.latlng.lat.toFixed(5)), parseFloat(e.latlng.lng.toFixed(5))];
+        console.log(location);
+
+        if (_this5._mode == 'add-marker') {
+
+          _this5.addMarker(location);
+        }
+      });
+    }
+  }, {
+    key: 'showDataWindow',
+    value: function showDataWindow(data) {}
+  }, {
+    key: 'initMap',
+    value: function initMap() {
+
+      this.map = L.map('map-leaflet', { worldCopyJump: true }).setView(this.getCenter(), this.getZoom());
+
+      L.tileLayer(this.MapDriver.get('osm').url, {
+        maxZoom: 12,
+        minZoom: 2,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' + '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' + 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: this.MapDriver.get('osm').id
+      }).addTo(this.map);
+
+      this.map.locate({
+        setView: true,
+        maxZoom: 10
+      });
+
+      if (this.data.countries) {
+
+        var country = this.data.countries[0];
+
+        L.geoJSON(country.geometry, {
+          style: {
+            "color": "#15830B",
+            "weight": 5,
+            "opacity": 0.8
+          }
+        }).addTo(this.map);
+      }
+    }
+
+    // private map logic function
+
+  }, {
+    key: 'setMapCenter',
+    value: function setMapCenter() {
+      var center = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+
+      if (center.length) {
+        this.config.center = center;
+      }
+    }
+  }, {
+    key: 'setMapZoom',
+    value: function setMapZoom() {
+      var zoom = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+
+      if (zoom) {
+        this.config.zoom = zoom;
+      }
+    }
+  }, {
+    key: 'getCenter',
+    value: function getCenter() {
+      return this.data.center;
+    }
+  }, {
+    key: 'getZoom',
+    value: function getZoom() {
+      return this.data.zoom;
+    }
+  }, {
+    key: 'getMarkerPositions',
+    value: function getMarkerPositions() {
+
+      var wp = [];
+
+      this.markers.forEach(function (marker) {
+
+        var pos = marker.getLatLng();
+        wp.push([pos.lat, pos.lng]);
+      });
+
+      return wp;
+    }
+  }, {
+    key: 'addMarker',
+    value: function addMarker(location) {
+      var _this6 = this;
+
+      var divIcon = L.divIcon({ className: 'mapicon-event' });
+
+      var marker = L.marker(location, { icon: divIcon, draggable: true }).addTo(this.map);
+      marker.bindPopup("<b>Marker At " + location + "</b>");
+
+      marker.on('dragend', function (e) {
+        var position = marker.getLatLng();
+        console.log(position);
+
+        _this6.addPolyline(_this6.getMarkerPositions());
+      });
+
+      this.markers.push(marker);
+
+      this._mode = false;
+      this.addPolyline(this.getMarkerPositions());
+    }
+  }, {
+    key: 'addPolyline',
+    value: function addPolyline(points) {
+
+      if (this.polyline) this.removePolyline();
+
+      this.polyline = L.polyline([points], {
+        color: 'white',
+        weight: 4,
+        opacity: .5,
+        // dashArray: '4,4',
+        lineJoin: 'round',
+        smoothFactor: 5
+      }).addTo(this.map);
+    }
+  }, {
+    key: 'removePolyline',
+    value: function removePolyline() {
+
+      this.map.removeLayer(this.polyline);
+    }
+  }]);
+
+  return MapEditor;
+}(_component2.default);
+
+exports.default = MapEditor;
 });
 
 ;require.register("js/components/test.js", function(exports, require, module) {
@@ -2911,6 +3572,54 @@ var User = function (_Model) {
 exports.default = User;
 });
 
+;require.register("js/templates/test.template.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _template = require("../app/template.js");
+
+var _template2 = _interopRequireDefault(_template);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TestTemplate = function (_Template) {
+  _inherits(TestTemplate, _Template);
+
+  function TestTemplate() {
+    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, TestTemplate);
+
+    return _possibleConstructorReturn(this, (TestTemplate.__proto__ || Object.getPrototypeOf(TestTemplate)).call(this, data));
+  }
+
+  _createClass(TestTemplate, [{
+    key: "template",
+    value: function template() {
+
+      var data = this.data;
+
+      this._template = "\n      \n      <div class=\"test\">" + data.title + "</div>\n      \n    ";
+    }
+  }]);
+
+  return TestTemplate;
+}(_template2.default);
+
+exports.default = TestTemplate;
+});
+
 ;require.register("js/views/button.js", function(exports, require, module) {
 'use strict';
 
@@ -3398,11 +4107,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Template = function () {
-	function Template() {
+var TTemplate = function () {
+	function TTemplate() {
 		var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-		_classCallCheck(this, Template);
+		_classCallCheck(this, TTemplate);
 
 		this.utils = new _utils2.default();
 		this.templates = [];
@@ -3413,7 +4122,7 @@ var Template = function () {
 		this.templates['tooltipStarTemplate'] = $('\n\n\t\t\t<div class="headline">' + this.data.pl_hostname + '</div>\n\n\t\t\t<div class="property">\n\t\t\t  <div class="label"><span>Type</span></div>\n\t\t\t  <div class="value"><span>' + this.data.type + '</span></div>\n\t\t\t</div>\n\n\t\t\t<div class="property">\n\t\t\t  <div class="label"><span>Distance (Parsec)</span></div>\n\t\t\t  <div class="value"><span>' + this.data.dist + '</span></div>\n\t\t\t</div>\n\n\t\t\t<div class="property">\n\t\t\t  <div class="label"><span>Distance (Light Years)</span></div>\n\t\t\t  <div class="value"><span>' + (this.data.dist * this.utils.PC).toFixed(2) + '</span></div>\n\t\t\t</div>\n\n\t\t\t<div class="property">\n\t\t\t  <div class="label"><span>Mass (Sun Masses)</span></div>\n\t\t\t  <div class="value"><span>' + this.data.mass + '</span></div>\n\t\t\t</div>\n\n\t\t\t<div class="property">\n\t\t\t  <div class="label"><span>Radius (Sun Radii)</span></div>\n\t\t\t  <div class="value"><span>' + this.data.radius + '</span></div>\n\t\t\t</div>\n\n\t\t\t<div class="property">\n\t\t\t  <div class="label"><span>Planets</span></div>\n\t\t\t  <div class="value"><span>' + this.data.pl_num + '</span></div>\n\t\t\t</div>\n\n\t\t\t<div class="property">\n\t\t\t  <div class="label"><span>Habitable Planets</span></div>\n\t\t\t  <div class="value"><span>' + this.data.habitable + '</span></div>\n\t\t\t</div>\n\n\t\t');
 	}
 
-	_createClass(Template, [{
+	_createClass(TTemplate, [{
 		key: 'render',
 		value: function render() {
 
@@ -3421,10 +4130,10 @@ var Template = function () {
 		}
 	}]);
 
-	return Template;
+	return TTemplate;
 }();
 
-exports.default = Template;
+exports.default = TTemplate;
 });
 
 ;require.register("js/views/tooltip.js", function(exports, require, module) {
@@ -3526,6 +4235,129 @@ exports.default = Tooltip;
   
 });})();require('___globals___');
 
+'use strict';
+
+L.AnimatedMarker = L.Marker.extend({
+  options: {
+    // meters
+    distance: 200,
+    // ms
+    interval: 1000,
+    // animate on add?
+    autoStart: true,
+    // callback onend
+    onEnd: function onEnd() {},
+    clickable: false
+  },
+
+  initialize: function initialize(latlngs, options) {
+    this.setLine(latlngs);
+    L.Marker.prototype.initialize.call(this, latlngs[0], options);
+  },
+
+  // Breaks the line up into tiny chunks (see options) ONLY if CSS3 animations
+  // are not supported.
+  _chunk: function _chunk(latlngs) {
+    var i,
+        len = latlngs.length,
+        chunkedLatLngs = [];
+
+    for (i = 1; i < len; i++) {
+      var cur = latlngs[i - 1],
+          next = latlngs[i],
+          dist = cur.distanceTo(next),
+          factor = this.options.distance / dist,
+          dLat = factor * (next.lat - cur.lat),
+          dLng = factor * (next.lng - cur.lng);
+
+      if (dist > this.options.distance) {
+        while (dist > this.options.distance) {
+          cur = new L.LatLng(cur.lat + dLat, cur.lng + dLng);
+          dist = cur.distanceTo(next);
+          chunkedLatLngs.push(cur);
+        }
+      } else {
+        chunkedLatLngs.push(cur);
+      }
+    }
+    chunkedLatLngs.push(latlngs[len - 1]);
+
+    return chunkedLatLngs;
+  },
+
+  onAdd: function onAdd(map) {
+    L.Marker.prototype.onAdd.call(this, map);
+
+    // Start animating when added to the map
+    if (this.options.autoStart) {
+      this.start();
+    }
+  },
+
+  animate: function animate() {
+    var self = this,
+        len = this._latlngs.length,
+        speed = this.options.interval;
+
+    // Normalize the transition speed from vertex to vertex
+    if (this._i < len && this.i > 0) {
+      speed = this._latlngs[this._i - 1].distanceTo(this._latlngs[this._i]) / this.options.distance * this.options.interval;
+    }
+
+    // Only if CSS3 transitions are supported
+    if (L.DomUtil.TRANSITION) {
+      if (this._icon) {
+        this._icon.style[L.DomUtil.TRANSITION] = 'all ' + speed + 'ms linear';
+      }
+      if (this._shadow) {
+        this._shadow.style[L.DomUtil.TRANSITION] = 'all ' + speed + 'ms linear';
+      }
+    }
+
+    // Move to the next vertex
+    this.setLatLng(this._latlngs[this._i]);
+    this._i++;
+
+    // Queue up the animation to the next next vertex
+    this._tid = setTimeout(function () {
+      if (self._i === len) {
+        self.options.onEnd.apply(self, Array.prototype.slice.call(arguments));
+      } else {
+        self.animate();
+      }
+    }, speed);
+  },
+
+  // Start the animation
+  start: function start() {
+    this.animate();
+  },
+
+  // Stop the animation in place
+  stop: function stop() {
+    if (this._tid) {
+      clearTimeout(this._tid);
+    }
+  },
+
+  setLine: function setLine(latlngs) {
+    if (L.DomUtil.TRANSITION) {
+      // No need to to check up the line if we can animate using CSS3
+      this._latlngs = latlngs;
+    } else {
+      // Chunk up the lines into options.distance bits
+      this._latlngs = this._chunk(latlngs);
+      this.options.distance = 10;
+      this.options.interval = 30;
+    }
+    this._i = 0;
+  }
+
+});
+
+L.animatedMarker = function (latlngs, options) {
+  return new L.AnimatedMarker(latlngs, options);
+};
 "use strict";
 
 // This file is part of Leaflet.Geodesic.
@@ -4014,6 +4846,265 @@ L.Geodesic = L.Polyline.extend({
 
 L.geodesic = function (latlngs, options) {
   return new L.Geodesic(latlngs, options);
+};
+'use strict';
+
+L.interpolatePosition = function (p1, p2, duration, t) {
+    var k = t / duration;
+    k = k > 0 ? k : 0;
+    k = k > 1 ? 1 : k;
+    return L.latLng(p1.lat + k * (p2.lat - p1.lat), p1.lng + k * (p2.lng - p1.lng));
+};
+
+L.Marker.MovingMarker = L.Marker.extend({
+
+    //state constants
+    statics: {
+        notStartedState: 0,
+        endedState: 1,
+        pausedState: 2,
+        runState: 3
+    },
+
+    options: {
+        autostart: false,
+        loop: false
+    },
+
+    initialize: function initialize(latlngs, durations, options) {
+        L.Marker.prototype.initialize.call(this, latlngs[0], options);
+
+        this._latlngs = latlngs.map(function (e, index) {
+            return L.latLng(e);
+        });
+
+        this._durations = durations;
+        this._currentDuration = 0;
+        this._currentIndex = 0;
+
+        this._state = L.Marker.MovingMarker.notStartedState;
+        this._startTime = 0;
+        this._startTimeStamp = 0;
+        this._pauseStartTime = 0;
+        this._animId = 0;
+        this._animRequested = false;
+        this._currentLine = [];
+    },
+
+    isRunning: function isRunning() {
+        return this._state === L.Marker.MovingMarker.runState;
+    },
+
+    isEnded: function isEnded() {
+        return this._state === L.Marker.MovingMarker.endedState;
+    },
+
+    isStarted: function isStarted() {
+        return this._state !== L.Marker.MovingMarker.notStartedState;
+    },
+
+    isPaused: function isPaused() {
+        return this._state === L.Marker.MovingMarker.pausedState;
+    },
+
+    start: function start() {
+        if (this.isRunning()) {
+            return;
+        }
+
+        if (this.isPaused()) {
+            this.resume();
+        } else {
+            this._loadLine(0);
+            this._startAnimation();
+            this.fire('start');
+        }
+    },
+
+    resume: function resume() {
+        if (!this.isPaused()) {
+            return;
+        }
+        // update the current line
+        this._currentLine[0] = this.getLatLng();
+        this._currentDuration -= this._pauseStartTime - this._startTime;
+        this._startAnimation();
+    },
+
+    addLatLng: function addLatLng(latlng, duration) {
+        this._latlngs.push(L.latLng(latlng));
+        this._durations.push(duration);
+    },
+
+    moveTo: function moveTo(latlng, duration) {
+        this._stopAnimation();
+        this._latlngs = [this.getLatLng(), L.latLng(latlng)];
+        this._durations = [duration];
+        this._state = L.Marker.MovingMarker.notStartedState;
+        this.start();
+        this.options.loop = false;
+    },
+
+    addStation: function addStation(pointIndex, duration) {
+        if (pointIndex > this._latlngs.length - 2 || pointIndex < 1) {
+            return;
+        }
+        var t = this._latlngs[pointIndex];
+        this._latlngs.splice(pointIndex + 1, 0, t);
+        this._durations.splice(pointIndex, 0, duration);
+    },
+
+    _startAnimation: function _startAnimation() {
+        this._startTime = Date.now();
+        this._state = L.Marker.MovingMarker.runState;
+        this._animId = L.Util.requestAnimFrame(function (timestamp) {
+            this._startTimeStamp = timestamp;
+            this._animate(timestamp);
+        }, this, true);
+        this._animRequested = true;
+    },
+
+    _resumeAnimation: function _resumeAnimation() {
+        if (!this._animRequested) {
+            this._animId = L.Util.requestAnimFrame(function (timestamp) {
+                this._animate(timestamp);
+            }, this, true);
+        }
+    },
+
+    _stopAnimation: function _stopAnimation() {
+        if (this._animRequested) {
+            L.Util.cancelAnimFrame(this._animId);
+            this._animRequested = false;
+        }
+    },
+
+    _loadLine: function _loadLine(index) {
+        this._currentIndex = index;
+        this._currentDuration = this._durations[index];
+        this._currentLine = this._latlngs.slice(index, index + 2);
+    },
+
+    /**
+     * Load the line where the marker is
+     * @param  {Number} timestamp
+     * @return {Number} elapsed time on the current line or null if
+     * we reached the end or marker is at a station
+     */
+    _updateLine: function _updateLine(timestamp) {
+        //time elapsed since the last latlng
+        var elapsedTime = timestamp - this._startTimeStamp;
+
+        // not enough time to update the line
+        if (elapsedTime <= this._currentDuration) {
+            return elapsedTime;
+        }
+
+        var lineIndex = this._currentIndex;
+        var lineDuration = this._currentDuration;
+
+        while (elapsedTime > lineDuration) {
+            //substract time of the current line
+            elapsedTime -= lineDuration;
+            lineIndex++;
+
+            // test if we have reached the end of the polyline
+            if (lineIndex >= this._latlngs.length - 1) {
+
+                if (this.options.loop) {
+                    lineIndex = 0;
+                    this.fire('loop', { elapsedTime: elapsedTime });
+                } else {
+                    // place the marker at the end, else it would be at 
+                    // the last position
+                    this.setLatLng(this._latlngs[this._latlngs.length - 1]);
+                    this.stop(elapsedTime);
+                    return null;
+                }
+            }
+            lineDuration = this._durations[lineIndex];
+        }
+
+        this._loadLine(lineIndex);
+        this._startTimeStamp = timestamp - elapsedTime;
+        this._startTime = Date.now() - elapsedTime;
+        return elapsedTime;
+    },
+
+    _animate: function _animate(timestamp, noRequestAnim) {
+        // compute the time elapsed since the start of the line
+        var elapsedTime;
+        this._animRequested = false;
+
+        //find the next line and compute the new elapsedTime
+        elapsedTime = this._updateLine(timestamp);
+
+        if (elapsedTime === null) {
+            //we have reached the end
+            return;
+        }
+
+        // compute the position
+        var p = L.interpolatePosition(this._currentLine[0], this._currentLine[1], this._currentDuration, elapsedTime);
+        this.setLatLng(p);
+
+        if (!noRequestAnim) {
+            this._animId = L.Util.requestAnimFrame(this._animate, this, false);
+            this._animRequested = true;
+        }
+    },
+
+    onAdd: function onAdd(map) {
+        L.Marker.prototype.onAdd.call(this, map);
+
+        if (this.options.autostart && !this.isStarted()) {
+            this.start();
+            return;
+        }
+
+        if (this.isRunning()) {
+            this._resumeAnimation();
+        }
+    },
+
+    onRemove: function onRemove(map) {
+        L.Marker.prototype.onRemove.call(this, map);
+        this._stopAnimation();
+    },
+
+    pause: function pause() {
+        if (!this.isRunning()) {
+            return;
+        }
+
+        this._pauseStartTime = Date.now();
+        this._state = L.Marker.MovingMarker.pausedState;
+        this._stopAnimation();
+        //force animation to place the marker at the right place
+        this._animate(this._startTimeStamp + (this._pauseStartTime - this._startTime), true);
+    },
+
+    stop: function stop(elapsedTime) {
+        if (this.isEnded()) {
+            return;
+        }
+
+        this._stopAnimation();
+
+        if (typeof elapsedTime === 'undefined') {
+            //user call
+            elapsedTime = 0;
+            // force animation to place the marker at the right place
+            this._animate(this._startTimeStamp + (Date.now() - this._startTime), true);
+        }
+
+        this._state = L.Marker.MovingMarker.endedState;
+        this.fire('end', { elapsedTime: elapsedTime });
+    }
+});
+
+L.Marker.movingMarker = function (latlngs, duration, options) {
+    return new L.Marker.MovingMarker(latlngs, duration, options);
 };
 "use strict";
 

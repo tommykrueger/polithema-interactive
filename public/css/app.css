@@ -638,6 +638,87 @@ figure {
 .article-main {
   padding: 50px;
 }
+.mapeditor {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #000;
+}
+.mapeditor-controls {
+  width: 480px;
+  margin-left: -240px;
+  padding: 10px;
+  z-index: 1000;
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  background: rgba(0,0,0,0.25);
+}
+.mapeditor-controls .button {
+  display: inline-block;
+}
+.button-add-marker,
+.button-add-route,
+.button-save-dataset,
+select {
+  margin: 0 5px;
+  padding: 4px 8px;
+  outline: 0;
+  border: 1px solid #4682b4;
+}
+.button-add-marker.is-active,
+.button-add-route.is-active,
+.button-save-dataset.is-active,
+select.is-active {
+  background: #fff;
+  -webkit-box-shadow: inset 0 0 4px #000;
+  box-shadow: inset 0 0 4px #000;
+}
+.map-views {
+  z-index: 10000;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.map-views .button {
+  min-width: 32px;
+  height: 32px;
+  display: inline-block;
+  padding: 0 8px;
+  color: #333;
+  cursor: pointer;
+  text-align: center;
+  line-height: 32px;
+  background: #fff;
+  border-radius: 2px;
+  border: 1px solid #808080;
+}
+.map-views .button.is-active {
+  -webkit-box-shadow: inset 0 0 4px #000;
+  box-shadow: inset 0 0 4px #000;
+}
+.map-legend {
+  z-index: 10000;
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  background: rgba(255,255,255,0.8);
+}
+.map-legend .dataset {
+  padding: 4px 6px;
+  display: block;
+  font-size: 10px;
+}
+.map-legend .dataset span {
+  width: 16px;
+  height: 3px;
+  margin-right: 5px;
+  display: inline-block;
+  vertical-align: middle;
+}
 .animated-icon {
   width: 16px;
   height: 16px;
@@ -658,11 +739,41 @@ figure {
 #map-interactive {
   width: 100%;
   height: 420px;
-  margin: 0 auto;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.map-leaflet,
+.map-globe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+  position: relative;
+  background: #c0c0c0;
+}
+.map-leaflet:before,
+.map-globe:before,
+.map-leaflet:after,
+.map-globe:after {
+  content: '';
+  width: 100%;
+  height: 4px;
+  display: block;
+  -webkit-box-shadow: inset 0 0 10px rgba(0,0,0,0.25);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.25);
+  z-index: 10000;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.map-leaflet:after,
+.map-globe:after {
+  top: auto;
+  bottom: 0;
 }
 path.leaflet-interactive {
-  stroke: #000;
-  stroke-dasharray: 12 8;
+  stroke-width: 2px;
 }
 .layer-globe {
   display: none;
@@ -681,9 +792,29 @@ path.leaflet-interactive {
 .layer-globe--is-visible {
   display: block;
 }
+.image-overlay {
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  z-index: 100000;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 .land {
   fill: #444;
   fill-opacity: 0.25;
+}
+.country {
+  fill: #15830b;
+  stroke: #fff;
+  stroke-width: 0.5px;
+  stroke-opacity: 0.25;
+}
+.mapicon-event {
+  background: #4682b4;
+  border-radius: 50%;
+  border: 1px solid #fff;
 }
 .route-path,
 .route-path2 {
@@ -757,6 +888,7 @@ path.leaflet-interactive {
   color: #ff5d1c;
   cursor: pointer;
   position: absolute;
+  z-index: 10000;
   left: 10px;
   bottom: 10px;
   border: 1px solid #a0a0a0;

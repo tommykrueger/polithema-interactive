@@ -10,7 +10,8 @@ module.exports = {
           'js/jquery-3.3.1.min.js',
           'js/d3.v3.min.js',
           'js/topojson.v1.min.js',
-          'js/Leaflet.Geodesic.js'
+          'js/Leaflet.Geodesic.js',
+          'js/MovingMarker.js'
         ]
       }
     },

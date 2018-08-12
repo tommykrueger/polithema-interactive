@@ -1,3 +1,102 @@
+
+.mapeditor
+  width: 100%
+  height: 100%
+  display: block
+  position: absolute
+  left: 0
+  top: 0
+  background: #000
+
+
+.mapeditor-controls
+  width: 480px
+  margin-left: -240px
+  padding: 10px
+  z-index: 1000
+  position: absolute
+  left: 50%
+  top: 20px
+  background: alpha(#000, 0.25)
+
+  .button 
+    display: inline-block
+
+
+.button-add-marker
+.button-add-route
+.button-save-dataset
+select
+  margin: 0 5px
+  padding: 4px 8px
+  outline: 0
+  border: 1px solid steelblue
+
+  &.is-active
+    background: #fff
+    box-shadow: inset 0 0 4px #000
+
+
+
+
+
+/*
+
+.interactivemap
+  width: 100%
+  z-index: 10000
+  position: absolute
+  top: 0
+  left: 0
+  */
+
+.map-views
+  z-index: 10000
+  position: absolute
+  top: 10px
+  right: 10px
+
+  .button
+    min-width: 32px
+    height: 32px
+    display: inline-block
+    padding: 0 8px
+    color: #333
+    cursor: pointer
+    text-align: center
+    line-height: 32px
+    background: #fff
+    border-radius: 2px
+    border: 1px solid #808080
+
+    &.is-active
+      box-shadow: inset 0 0 4px #000
+
+
+.map-legend
+  z-index: 10000
+  position: absolute
+  left: 10px
+  bottom: 10px
+  background: alpha(#fff, 0.8)
+
+  .dataset
+    padding: 4px 6px
+    display: block
+    font-size: 10px
+
+    span 
+      width: 16px
+      height: 3px
+      margin-right: 5px
+      display: inline-block
+      vertical-align: middle
+
+
+
+
+
+
 .animated-icon
   width: 16px
   height: 16px
@@ -10,13 +109,45 @@
 
 
 #map-interactive
-	width: 100%
-	height: 420px
-	margin: 0 auto
+  width: 100%
+  height: 420px
+  display: block
+  position: relative
+  overflow: hidden
+
+
+.map-leaflet
+.map-globe
+  width: 100%
+  height: 100%
+  display: block
+  z-index: 2
+  position: relative
+  background: #c0c0c0
+
+  &:before
+  &:after
+    content: ''
+    width: 100%
+    height: 4px
+    display: block
+    box-shadow: inset 0 0 10px alpha($colors.black, 0.25)
+    z-index: 10000
+    position: absolute
+    left: 0
+    top: 0
+
+  &:after
+    top: auto
+    bottom: 0
+
+
 
 path.leaflet-interactive
-  stroke: black
-  stroke-dasharray: 12 8
+  //stroke: black
+  //stroke-dasharray: 12 8
+  // stroke: red
+  stroke-width: 2px
 
 
 
@@ -37,10 +168,35 @@ path.leaflet-interactive
     display: block
 
 
+
+.image-overlay
+  opacity: 0.2
+  z-index: 100000
+  position: absolute
+  top: 0
+  left: 0
+
+
+
 // svg globe definition
 .land
   fill: #444
   fill-opacity: 0.25
+
+
+.country
+  fill: #15830B
+  stroke: #fff
+  stroke-width: 0.5px
+  stroke-opacity: 0.25
+
+
+
+.mapicon-event
+  background: steelblue
+  border-radius: 50%
+  border: 1px solid #fff
+
 
 .route-path
 .route-path2
@@ -126,6 +282,7 @@ path.leaflet-interactive
   color: $colors.red
   cursor: pointer
   position: absolute
+  z-index: 10000
   left: 10px
   bottom: 10px
   border: 1px solid #a0a0a0

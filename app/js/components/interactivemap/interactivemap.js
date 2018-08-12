@@ -31,6 +31,12 @@ export default class InteractiveMap extends Component {
     };
 
 
+    this.datasetColors = ['#ce0000', '#00ce00', '#cece00', '#0000ce'];
+
+
+    this.isViewToggled = false;
+
+
     this.fleets = [];
 
     // 1.0, 2.0, 3.0
@@ -39,9 +45,18 @@ export default class InteractiveMap extends Component {
     this.stateRunning = true;
 
     this.$map = $('#map-interactive');
+    this.$mapLeaflet = $('<div class="map-leaflet" id="map-leaflet"></div>');
+    this.$mapGlobe = $('<div class="map-globe" id="map-globe"></div>');
+
+    this.$map.append(this.$mapLeaflet);
+    this.$map.append(this.$mapGlobe);
+
     this.data = this.$map.data('json');
 
     console.log(this.data);
+
+    this.scenario = this.$map.data('scenario');
+    this.loadScenario();
 
     /*
     this.eventTimeline = new EventTimeline({
@@ -67,13 +82,22 @@ export default class InteractiveMap extends Component {
     this.registerWaypoints();
     this.registerEvents();
 
+    this.addDataSeries();
+
     // start the render loop
     // this.render();
 
-    this.$globeLayer = $('<div class="layer-globe"></div>');
-    $('body').append(this.$globeLayer);
+    this.$globeLayer = this.$mapGlobe;
+    //$(this.node).before(this.$globeLayer);
 
-    this.initEvents();
+    this.init();
+    // this.initEvents();
+
+
+    //this.$mapLeaflet.append('<img class="image-overlay" src="img/Columbus_first_voyage.jpg">');
+
+    // 2 = editor mode
+    //this.mode = 2;
 
 
   }
@@ -87,159 +111,90 @@ export default class InteractiveMap extends Component {
   }
 
 
+  loadScenario () {
+
+    $.ajax({
+      url: '../server/',
+      data: { 
+        model: 'scenario',
+        action: 'get',
+        id: 1
+      }, 
+      dataType: 'json',
+      success: (d) => {
+        
+        console.log(d);
+        //this.datasets = d.data;
+        //this.renderDatasets(d.data);
+
+      }
+
+    })
+
+  }
+
+
 
   init () {
 
     this.initEvents();
+
+    setTimeout(() => {
+
+      this.initGlobe();
+
+    }, 1000);
 
   }
 
 
   initEvents () {
 
-    let $globeButton = $('<button class="globe-button">View Globe</button>');
-    $(this.node).append($globeButton);
+    let colors = this.datasetColors;
 
-    $globeButton.on('click', (e) => {
+    this.$template = $(`
       
-      this.$globeLayer.addClass('layer-globe--is-visible');
-
-      this.globe = new Globe({
-        map: 'json/world-110m.json',
-        file: 'json/alcohol-worldwide.json',
-        color: {
-          domain: [100, 1000000, 20000000],
-          range: ["green", "yellow", "red"]
-        },
-        afterRender: function(){
-
-          // define the color ranges for the data series
-
-          this.colors = {
-            total: d3.scale
-              .linear()
-              .domain([0, 7.5, 10, 15])
-              .interpolate(d3.interpolateRgb)
-              .range(["#EED447", "#D29C50", "#C48A54", "#A66D55"]),
-              //.range(["#fff0f0", "#f09999", "#f06060", "#f02020"]),
-
-            /*
-            beer: d3.scale
-              .linear()
-              .domain([0, 5, 10, 15])
-              .interpolate(d3.interpolateRgb)
-              .range(["#EED447", "#D29C50", "#C48A54", "#A66D55"]),
-            */
-
-            beer: d3.scale
-              .linear()
-              .domain([0, 2, 4, 6, 8, 10, 12])
-              .interpolate(d3.interpolateRgb)
-              .range(["#F3F300", "#F3F300", "#DC9F00", "#CA8312", "#B86B20", "#8B4323", "#73301F"]),
-          }
-
-        },
-        draw: function() {
-
-          console.log('drawing', this.countries.objects.land);
-
-          var self = this;
-
-          this.land = this.g
-            .insert("path", ".land")
-            .datum(topojson.feature(this.countries, this.countries.objects.land))
-            .attr("class", "land")
-            .attr("d", this.path);
-
-
-          this.featureGroup = this.g.append('g').attr("class", "features");
-
-
-          this.routeData = [[37.14928, -6.99775],
-            [28.116667, -17.233333],
-            [25.71733, -45.21767],
-            [27.55911, -47.40189],
-            [25.67340, -49.77493],
-            [27.20502, -67.77054],
-            [24.31628, -75.10941],
-            [23.26149, -74.91410],
-            [22.00410, -76.24177],
-            [22.22801, -77.20857],
-            [21.51433, -76.48347],
-            [20.36515, -73.07771],
-            [19.54446, -69.11606],
-            [20.97703, -67.63291],
-            [21.44816, -66.31455],
-            [21.08114, -66.21057],
-            [21.96008, -65.24377],
-            [22.02120, -63.55187],
-            [28.13679, -59.96922],
-            [29.59913, -50.47703],
-            [29.75186, -43.97312],
-            [31.75474, -49.21188],
-            [38.16749, -45.28633],
-            [38.30556, -32.80586],
-            [37.75172, -31.92696],
-            [36.20716, -26.56563],
-            [38.58092, -22.96211],
-            [37.71859, -16.61133],
-            [38.53575, -9.36902]];
-
-
-
-          this.routeData = this.arrayHelper.switchLatLonFromArray(this.routeData);
-
-          this.g
-            .append("path")
-            .datum({type: "LineString", coordinates: this.routeData})
-            .attr('class', 'route-path')
-            .attr('d', this.path);
-
-
-          this.routeData2 = [[35.71864, -7.42538],
-            [28.116667, -17.233333],
-            [-24.91633, -44.75006],
-            [-35.55988, -55.82256],
-            [-52.61556, -68.13515],
-            [-52.61556, -75.1664],
-            [13.29934, 144.71998],
-            [9.71007, 125.20595],
-            [9.34169, 124.28309],
-            [10.31593, 124.15126],
-            [8.60979, 117.91454],
-            [5.22934, 114.97021],
-            [-8.6002, 125.38765],
-            [-34.56503, 18.4142],
-            [15.92832, -23.59726]];
-
-
-          this.routeData2 = this.arrayHelper.switchLatLonFromArray(this.routeData2);
-
-          this.g
-            .append("path")
-            .datum({type: "LineString", coordinates: this.routeData2})
-            .attr('class', 'route-path2')
-            .attr('d', this.path);
-
-
-        },
-
-        redraw: function(){
-
-          this.land.attr("d", this.path);
-
-          d3.select('.route-path')
-            .attr('d', this.path);
-
-          d3.select('.route-path2')
-            .attr('d', this.path);
-
-        
-        }
-
-      });
+        <div class="map-views">
+          <span class="button button-play" title="Start Interactive Map Animation">Play</span>
+          <span class="button button-2d is-active" title="View map as a mercator projection">2D</span>
+          <span class="button button-3d" title="View map as an orthographic projection">3D</span>
+        </div>
+        <div class="map-legend">
+          ${this.data.series.map( (d, i) => {
+            return `<span class="dataset"><span style="background-color:${colors[i]};"></span>${d.name}</span>`;
+          }).join(" ")}
+        </div>
       
-      this.globe.init();
+    `);
+
+
+    $(this.node).append( this.$template );
+
+
+
+
+    //let $globeButton = $('<button class="globe-button">View Globe</button>');
+    //$(this.node).append($globeButton);
+
+    // this.$template.find('.button-3d')
+    this.$template.find('.button-3d').on('click', (e) => {
+      
+      this.$mapGlobe.show();
+      this.$mapLeaflet.hide(); 
+
+      this.isViewToggled = !this.isViewToggled;
+
+      if (this.isViewToggled) {
+
+        this.$mapGlobe.show();
+        this.$mapLeaflet.hide(); 
+
+      } else {
+
+        this.$mapGlobe.hide();
+        this.$mapLeaflet.show(); 
+
+      }
 
     });
 
@@ -248,7 +203,7 @@ export default class InteractiveMap extends Component {
 
   initMap () {
 
-    this.map = L.map('map-interactive', {worldCopyJump: true}).setView( this.getCenter(), this.getZoom() );
+    this.map = L.map('map-leaflet', {worldCopyJump: true}).setView( this.getCenter(), this.getZoom() );
 
     L.tileLayer( this.MapDriver.get('worldoceanbase').url, {
   		maxZoom: 12,
@@ -262,7 +217,7 @@ export default class InteractiveMap extends Component {
 
     this.map.locate({setView: true, maxZoom: 5});
 
-
+    /*
     var marker = L.divIcon({
       iconSize: [30, 30],
       iconAnchor: [10, 10],
@@ -270,6 +225,7 @@ export default class InteractiveMap extends Component {
       shadowSize: [0, 0],
       className: 'animated-icon my-icon-id'
     });
+    */
 
 
     this.map.on('click', (e) => {
@@ -277,8 +233,167 @@ export default class InteractiveMap extends Component {
       console.log(latlon);
     });
 
+    if (this.data.countries) {
+
+      let country = this.data.countries[0];
+
+      L.geoJSON(country.geometry, {
+        style: {
+          "color": "#15830B",
+          "weight": 5,
+          "opacity": 0.8
+        }
+      }).addTo(this.map);
+
+    }
+
   }
 
+
+
+  initGlobe () {
+
+    this.globe = new Globe({
+      map: 'json/world-110m.json',
+      //file: 'json/alcohol-worldwide.json',
+      color: {
+        domain: [100, 1000000, 20000000],
+        range: ["green", "yellow", "red"]
+      },
+      afterRender: function(){
+
+        // define the color ranges for the data series
+
+        this.colors = {
+          total: d3.scale
+            .linear()
+            .domain([0, 7.5, 10, 15])
+            .interpolate(d3.interpolateRgb)
+            .range(["#EED447", "#D29C50", "#C48A54", "#A66D55"]),
+            //.range(["#fff0f0", "#f09999", "#f06060", "#f02020"]),
+
+          beer: d3.scale
+            .linear()
+            .domain([0, 2, 4, 6, 8, 10, 12])
+            .interpolate(d3.interpolateRgb)
+            .range(["#F3F300", "#F3F300", "#DC9F00", "#CA8312", "#B86B20", "#8B4323", "#73301F"]),
+        }
+
+      },
+      draw: function() {
+
+        console.log('drawing', this.countries.objects.land);
+
+        var self = this;
+
+        this.land = this.g
+          .insert("path", ".land")
+          .datum(topojson.feature(this.countries, this.countries.objects.land))
+          .attr("class", "land")
+          //.attr('mask', 'url(#myMask)')
+          .attr("d", this.path);
+
+
+
+        let country = {"type":"Feature","properties":{"name":"Portugal"},"geometry":{"type":"Polygon","coordinates":[[[-9.034818,41.880571],[-8.671946,42.134689],[-8.263857,42.280469],[-8.013175,41.790886],[-7.422513,41.792075],[-7.251309,41.918346],[-6.668606,41.883387],[-6.389088,41.381815],[-6.851127,41.111083],[-6.86402,40.330872],[-7.026413,40.184524],[-7.066592,39.711892],[-7.498632,39.629571],[-7.098037,39.030073],[-7.374092,38.373059],[-7.029281,38.075764],[-7.166508,37.803894],[-7.537105,37.428904],[-7.453726,37.097788],[-7.855613,36.838269],[-8.382816,36.97888],[-8.898857,36.868809],[-8.746101,37.651346],[-8.839998,38.266243],[-9.287464,38.358486],[-9.526571,38.737429],[-9.446989,39.392066],[-9.048305,39.755093],[-8.977353,40.159306],[-8.768684,40.760639],[-8.790853,41.184334],[-8.990789,41.543459],[-9.034818,41.880571]]]},"id":"PRT"};
+
+        this.country = this.g
+          .insert("path", ".country")
+          .datum(country.geometry)
+          .attr("class", "country")
+          .attr('mask', 'url(#myMask)')
+          .attr("d", this.path);
+
+        this.featureGroup = this.g.append('g').attr("class", "features");
+
+
+        this.routeData = [[37.14928, -6.99775],
+          [28.116667, -17.233333],
+          [25.71733, -45.21767],
+          [27.55911, -47.40189],
+          [25.67340, -49.77493],
+          [27.20502, -67.77054],
+          [24.31628, -75.10941],
+          [23.26149, -74.91410],
+          [22.00410, -76.24177],
+          [22.22801, -77.20857],
+          [21.51433, -76.48347],
+          [20.36515, -73.07771],
+          [19.54446, -69.11606],
+          [20.97703, -67.63291],
+          [21.44816, -66.31455],
+          [21.08114, -66.21057],
+          [21.96008, -65.24377],
+          [22.02120, -63.55187],
+          [28.13679, -59.96922],
+          [29.59913, -50.47703],
+          [29.75186, -43.97312],
+          [31.75474, -49.21188],
+          [38.16749, -45.28633],
+          [38.30556, -32.80586],
+          [37.75172, -31.92696],
+          [36.20716, -26.56563],
+          [38.58092, -22.96211],
+          [37.71859, -16.61133],
+          [38.53575, -9.36902]];
+
+
+
+        this.routeData = this.arrayHelper.switchLatLonFromArray(this.routeData);
+
+        this.g
+          .append("path")
+          .datum({type: "LineString", coordinates: this.routeData})
+          .attr('class', 'route-path')
+          .attr('d', this.path);
+
+        /*
+        this.routeData2 = [[35.71864, -7.42538],
+          [28.116667, -17.233333],
+          [-24.91633, -44.75006],
+          [-35.55988, -55.82256],
+          [-52.61556, -68.13515],
+          [-52.61556, -75.1664],
+          [13.29934, 144.71998],
+          [9.71007, 125.20595],
+          [9.34169, 124.28309],
+          [10.31593, 124.15126],
+          [8.60979, 117.91454],
+          [5.22934, 114.97021],
+          [-8.6002, 125.38765],
+          [-34.56503, 18.4142],
+          [15.92832, -23.59726]];
+
+
+        this.routeData2 = this.arrayHelper.switchLatLonFromArray(this.routeData2);
+
+        this.g
+          .append("path")
+          .datum({type: "LineString", coordinates: this.routeData2})
+          .attr('class', 'route-path2')
+          .attr('d', this.path);
+          */
+
+
+      },
+
+      redraw: function(){
+
+        this.land.attr("d", this.path);
+
+        this.country.attr("d", this.path);
+
+        d3.select('.route-path').attr('d', this.path);
+
+        //d3.select('.route-path2').attr('d', this.path);
+      
+      }
+
+    });
+    
+    this.globe.init();
+
+  }
 
 
   // private map logic function
@@ -306,6 +421,47 @@ export default class InteractiveMap extends Component {
 
   getZoom () {
     return this.data.zoom;
+  }
+
+
+
+  addDataSeries() {
+
+    let colors = this.datasetColors;
+
+
+    if ( this.data.series === undefined || !this.data.series.length ) {
+      console.warn('This interactive map does not have any data series defined');
+      return false;
+    }
+
+
+    this.data.series.forEach( (serie, i) => {
+
+      console.log(serie, i);
+
+      if (serie.route) {
+
+        let polyline = L.polyline([ serie.route ],
+          {
+              color: colors[i],
+              weight: 4,
+              opacity: 1.0,
+              dashArray: '4,4',
+              lineJoin: 'round',
+              smoothFactor: 10
+          }
+        ).addTo(this.map);
+
+        // let animatedMarker = L.animatedMarker(polyline.getLatLngs()).addTo(this.map);
+
+      }
+
+    });
+
+
+    var marker2 = L.Marker.movingMarker(this.data.series[0].route, [3000, 2000, 5000, 3000], {autostart: true}).addTo(this.map);
+
   }
 
 
@@ -384,7 +540,7 @@ export default class InteractiveMap extends Component {
 
     if ( !this.data.voyage.waypoints.length ) {
 
-      console.warn('This interactive map does not have any events defined');
+      console.warn('This interactive map does not have any waypoints defined');
       return false;
     }
 
@@ -454,8 +610,15 @@ export default class InteractiveMap extends Component {
 
       } else {
 
-        let marker = L.marker(event.location).addTo(this.map);
+        let divIcon = L.divIcon({ className: 'mapicon-event' });
+
+        let marker = L.marker(event.location, { icon: divIcon, draggable:true }).addTo(this.map);
         marker.bindPopup("<b>" + event.name + "</b><br>" + event.date + "" + event.text + "");
+
+        marker.on('dragend', (e) => {
+          let position = marker.getLatLng();
+          console.log( position );
+        });
 
       }
 

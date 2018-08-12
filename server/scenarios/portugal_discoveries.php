@@ -3,7 +3,7 @@
 
 $scenario = [
 
-  'name'    => 'Magellans Weltumseglung 1519 - 1522',
+  'name'    => 'Portugals Entdeckungen',
   
   'map' => [
     'center'  => [-5.64742, -3.3728],
@@ -34,7 +34,7 @@ $scenario = [
     ],
   ],
 
-  
+
   'countries' => [
 
     [
