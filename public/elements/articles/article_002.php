@@ -7,7 +7,7 @@
 
     <div id="map-interactive" 
       data-component="InteractiveMap" 
-      data-json='<?php echo json_encode($scenario) ?>'>
+      data-json='<?php echo file_get_contents('http://localhost/polithema-interactive/server/index.php?model=scenario&action=get&id=2') ?>'>
       
     </div>
 
@@ -16,27 +16,25 @@
 
   <div class="article-main">
 
-    <h1 class="article-title">1492 - Die Entdeckung Amerikas: Die Reise des Christoph Kolumbus</h1>
+    <span class="article-subtitle"></span>
+    <h1 class="article-title">Die Erste Welumsegelung durch Ferdinand Magellán</h1>
 
     <div class="article-excerpt">
 
       <p>
-        Das Logbuch des Kolumbus gilt als eine der wichtigsten Zeugnisse von Seefahrten und Entdeckungsreisen der damaligen Zeit.
-        Es ist wie ein Tagebuch zu verstehen in dem Eindrücke, Entdeckungen aber auch Verhaltensweisen
-        anderer Protagonsiten aus der Sicht Kolumbus beschrieben werden. Als Leser dieses Bordbuches bekommt man eine Vorstellung für Gedankengänge und Wertvorstellungen
-        von damals.
+        Magellan selbst starb in Ostasien auf den heutigen Phillipinen. Er gelangte nicht mehr nach Spanien.
+        Die meisten Seeleute kamen nicht mehr nach Spanien zurück. Der Erste Weltumseglung im Jahre 1503 kann wahrhaftig als
+        Himmelfahrtskomamndo bezeichnet werden. 
       </p>
 
     </div>
 
     <div class="timeline">
 
-      <span class="timeline__start">1492</span>
-
+      <span class="timeline__start">1519</span>
 
       <span class="timeline-marker"></span>
       <span class="timeline-limits"></span>
-
 
       <ol class="timeline-events">
 

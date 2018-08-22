@@ -48,6 +48,9 @@ export default class MapEditor extends Component {
 
     this.datasets = [];
 
+    this.currentDatasetID = 0;
+    this.currentDatasetName = 0;
+
 
     this.populateMapData();
 
@@ -91,9 +94,9 @@ export default class MapEditor extends Component {
 
   renderDatasets (data) {
 
-    let $dropdown = $('<select name="datasets"></select>');
+    let $dropdown = $('<select class="datasets" name="datasets"></select>');
 
-    $dropdown.append('<option>Choose</option>');
+    $dropdown.append('<option>Choose Dataset</option>');
 
     data.forEach( d => {
 
@@ -102,11 +105,14 @@ export default class MapEditor extends Component {
 
     });
     
-    this.$editorControls.append( $dropdown );
+    this.$map.append( $dropdown );
 
     $dropdown.on('change', (e) => {
 
       let val = $(e.currentTarget).find(":checked").val();
+
+      this.currentDatasetID = val;
+      this.currentDatasetName = $(e.currentTarget).find(":checked").text();
 
       if (val) {
         let dataset = this.datasets.filter( (d) => { return d.id == val });
@@ -136,6 +142,7 @@ export default class MapEditor extends Component {
 
     }
 
+    route = this.simplifyRoute(route);
     console.log(route);
 
     $.ajax({
@@ -143,10 +150,10 @@ export default class MapEditor extends Component {
       data: { 
         model: 'dataset',
         action: 'save',
-        id: '123',
+        id: this.currentDatasetID,
         data: {
-          id: 123,
-          name: 'First Voyage',
+          id: this.currentDatasetID,
+          name: this.currentDatasetName,
           route: route
         }
       }, 
@@ -168,6 +175,17 @@ export default class MapEditor extends Component {
     });
 
   } 
+
+
+  simplifyRoute (route) {
+
+    for (var i=0; i<route.length; i++) {
+      route[i] = [route[i][0].toFixed(5), route[i][1].toFixed(5)];
+    }
+
+    return route;
+
+  }
 
 
 
@@ -276,7 +294,7 @@ export default class MapEditor extends Component {
 
   initMap () {
 
-    this.map = L.map('map-leaflet', { worldCopyJump: true }).setView( this.getCenter(), this.getZoom() );
+    this.map = L.map('map-leaflet', /*{ worldCopyJump: true }*/).setView( this.getCenter(), this.getZoom() );
 
     L.tileLayer( this.MapDriver.get('osm').url, {
   		maxZoom: 12,

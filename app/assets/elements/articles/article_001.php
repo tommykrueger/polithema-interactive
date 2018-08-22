@@ -1,4 +1,4 @@
-<?php include_once('../server/scenarios/kolumbus_discovery.php') ?>
+<?php // include_once('../server/scenarios/kolumbus_discovery.php') ?>
 
 
 <article class="article">
@@ -7,8 +7,7 @@
 
     <div id="map-interactive" 
       data-component="InteractiveMap" 
-      data-scenario="1"
-      data-json='<?php echo json_encode($scenario) ?>'>
+      data-json='<?php echo file_get_contents('http://localhost/polithema-interactive/server/index.php?model=scenario&action=get&id=1') ?>'>
       
     </div>
 
@@ -17,9 +16,16 @@
 
   <div class="article-main">
 
-    <h1 class="article-title">1492 - Die Entdeckung Amerikas: Die Reise des Christoph Kolumbus</h1>
+    <span class="article-subtitle">Christoph Kolumbus entdeckt Amerika</span>
+    <h1 class="article-title">1492 - Die Entdeckung der Neuen Welt</h1>
 
     <div class="article-excerpt">
+
+      <p>
+        Die Entdeckung der "Neuen Welt" durch Christoph Kolumbus gilt als einer der wichtigsten historischen Ereignisse 
+        der Europäischen Geschichte. Mit der Entdeckung Amerikas beginnt eine rund 500 Jahre andauernde Zeit der Kolonialisierung
+        der Welt durch die Europäischen Großmächte. Welche Motive       
+      </p>
 
       <p>
         Das Logbuch des Kolumbus gilt als eine der wichtigsten Zeugnisse von Seefahrten und Entdeckungsreisen der damaligen Zeit.
@@ -27,6 +33,25 @@
         anderer Protagonsiten aus der Sicht Kolumbus beschrieben werden. Als Leser dieses Bordbuches bekommt man eine Vorstellung für Gedankengänge und Wertvorstellungen
         von damals.
       </p>
+
+      <p>
+        Kolumbus war demnach nicht nur ein hervorrangender Navigator, Schiffsführer und Entdecker sondern er war auch
+        ein rücksichtsloser Eroberer, ein skrupeloser Machtmensch und gnadenloser Sklaventreiber. 
+        Die Gier nach Gold, Macht und Anerkennung trieb ihn unersättlich an. Es musste immer weiter gehen bis man die Ziele 
+        erreicht haben würde. Ohne Rücksicht auf Verluste koste es was es wolle. Nur so war es überhaupt möglich eine so gefährliche Reise in einem Holzboot
+        durchzuführen. Eine Kombination aus genialem Entdeckergeist und gnadenloser Skrupelosigkeit.
+        Die Überfahrt über den Atlantik kam Ende des 14. Jahrhunderts einem Himmelfahrtskomamdo gleich. Jeder Teilnehmer dieser Reise
+        musste realistisch damit rechnen nicht mehr lebend nach Hause zu kommen.
+      </p>
+
+
+      <h3>Fragen</h3>
+      <ul>
+        <li>War Kolumbus der Erster Europäer in Amerika? -> Nein!</li>
+        <li>Kolumbien wurde nach Christoph Kolumbus benannt. Durch die Spanischen Eroberer Anfang des 16. Jahrhunderts. Kolumbus selbst gelangte nicht nach Kolumbien.</li>
+        <li>War die Entdeckung Amerikas ein Fluch oder Segen? -> Beides</li>
+        <li></li>
+      </ul>
 
     </div>
 
@@ -201,7 +226,7 @@
 
           <span class="timeline-event-date">Oct 12</span>
           <div class="timeline-events-item-header">
-            <h3 class="timeline-event-name">Arriving the "New World"</h3>
+            <h3 class="timeline-event-name">Landung in der "Neuen Welt"</h3>
 
           </div>
 
@@ -246,5 +271,19 @@
     </div>
 
   </div>
+
+
+  <aside>
+
+    Dieser Artikel ist Teil einer Artikelserie. Lesen Sie weiter:
+
+    <ol>
+      <li>Kolumbus Zweite Reise nach Amerika</li>
+      <li>Kolumbus Dritte Reise nach Amerika</li>
+      <li>Kolumbus Vierte Reise nach Amerika</li>
+      <li>Das Vermächtnis Kolumbus</li>
+    </ol>
+
+  </aside>
 
 </article>

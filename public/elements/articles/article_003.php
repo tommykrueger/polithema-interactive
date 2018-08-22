@@ -22,6 +22,12 @@
 
       <p>
         ...
+
+        Die Portugiesen erschufen sich dadurch ein Netzwerk.
+        Die Portugiesischen Handels- und Kriegsschiffe konnten sich praktisch von Kontinent zu Kontinent entlanghangeln.
+        Wie an einer Perlenkette. Durch dieses Netzwerk an Außenposten war es den Portugiesen möglich globalen Handel zu betreiben.
+        Wenn wir heute im 21.Jhd. von "Globalisierung" sprechen. Die Portugiesen betrieben bereits vor 400 Jahren eine Form der 
+        Globalisierung. Und das ohne Flugzeuge, ohne GPS und moderne Navigationstechnologien.
       </p>
 
     </div>

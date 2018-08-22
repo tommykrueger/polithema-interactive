@@ -1,0 +1,59 @@
+
+.section-teasers
+  padding: 25px 50px 50px 50px
+  position: relative
+  background-color: #c0c0c0
+
+  &:before
+    content: ''
+    width: 100%
+    height: 100%
+    z-index: 1
+    position: absolute
+    left: 0
+    top: 0
+    opacity: 0.2
+    background: url('http://atlantic-cable.com/Maps/AchievementsMapD.jpg') no-repeat center center
+    //background: url('http://atlantic-cable.com/Article/1858Leslies/0821f.jpg') no-repeat center center
+    background-size: cover
+
+
+.section-content
+  z-index: 2
+  position: relative
+
+
+.article-teasers
+  display: flex
+  justify-content: space-between
+
+  .article
+    width: 23.5%
+    margin: 0
+    box-shadow: 0 0 3px alpha($colors.black, 0.25)
+
+    &__image
+      width: 100%
+      height: auto
+      max-height: 175px
+
+    &__subtitle
+      margin: 0 0 5px 0
+      display: block
+      color: #a0a0a0
+      font-family: 'Rubik', sans-serif
+      font-size: 12px
+      font-weight: 100
+
+    &__title
+      margin: 0
+      font-family: 'Rubik', sans-serif
+      font-size: 20px
+      font-weight: 500
+
+    &__excerpt
+      display: none
+
+
+.article--teaser__content
+  padding: 20px

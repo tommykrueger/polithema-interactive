@@ -2,7 +2,7 @@
 
   <h1 class="page-title">
 
-		<a href="http://polithema.de/" rel="home">
+		<a href="http://localhost/polithema-interactive/" rel="home">
 			<span class="page-name">
 				<span class="poli">Poli</span><span class="thema">Thema</span> <span class="page-subname">Interaktiv</span>
 			</span>

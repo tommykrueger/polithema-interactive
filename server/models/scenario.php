@@ -1,6 +1,7 @@
 <?php
 
 include_once './framework/model.php';
+include_once './models/dataset.php';
 
 class Scenario extends Model
 {
@@ -64,6 +65,22 @@ class Scenario extends Model
 
         if ($file) {
           $data = json_decode($file);
+
+          if ($data) {
+            
+            for ( $i=0; $i<count($data->series); $i++ ) {
+              $dataset = (new Dataset())->get($data->series[$i]);
+
+              if ($dataset) {
+                $data->series[$i] = $dataset;
+              }
+            }
+
+          }
+
+          $this->response['data'] = $data;
+          $this->respond();
+
           return $data;
         }
       } else {

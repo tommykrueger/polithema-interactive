@@ -11,6 +11,8 @@ module.exports = {
           'js/d3.v3.min.js',
           'js/topojson.v1.min.js',
           'js/Leaflet.Geodesic.js',
+          'js/leaflet.geometryutil.js',
+          'js/leaflet.polylineDecorator.js',
           'js/MovingMarker.js'
         ]
       }

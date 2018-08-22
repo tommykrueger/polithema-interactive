@@ -64,7 +64,7 @@ export default class Globe extends Component {
     this.line = d3.svg.line()
       .x((d) => { return this.projection([d[1], d[0]])[0]; })
       .y((d) => { return this.projection([d[1], d[0]])[1]; })
-      .interpolate("monotone")
+      .interpolate("cardinal")
       .tension(.0);
 
     this.scale0 = (this.width - 1) / 2 / Math.PI;

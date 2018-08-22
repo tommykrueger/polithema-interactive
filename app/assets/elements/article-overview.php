@@ -43,3 +43,17 @@
   </div>
 
 </article>
+
+
+
+<section class="section section-teasers">
+
+  <div class="section-content">
+
+    <h3 class="section-title">Das Zeitalter der Entdeckungen</h3>
+
+    <?php include_once('partials/article-teasers.php') ?>
+
+  </div>
+
+</section>
