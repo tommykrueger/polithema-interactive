@@ -8,53 +8,24 @@
 	padding: 8px 12px
 	display: inline-block
 	text-align: center
-
 	cursor: pointer
 	color: $colors.white
 	font-size: 14px
-	font-family: sans-serif
-
+	font-family: 'Roboto', Arial, sans-serif
 	text-align: center
 	text-decoration: none
 	position: relative
-
-	//box-shadow: 0 0 5px alpha($colors.black, 10%)
+	box-shadow: 0 0 5px alpha($colors.black, 10%)
 	background-color: $colors.blue
 	border: 0
 	outline: none
 	// background: linear-gradient(top, $colors.white, darken($colors.white, 7.5%))
-
 	transition: all 150ms ease-in-out
 
 
 	&-featured
 		border-color: darken($colors.primary, 15%)
 		background: linear-gradient(top, $colors.primary, darken($colors.primary, 15%))
-
-
-	&-orange
-		color: $colors.white
-		border-color: darken($colors.orange, 15%)
-		background: linear-gradient(top, $colors.orange, darken($colors.orange, 15%))
-
-		&:hover
-			background: linear-gradient(top, lighten($colors.orange, 10%), darken($colors.orange, 5%))
-
-
-	&-large
-		padding: 16px 32px
-		font-size: 16px
-
-
-	&.highlight
-		margin: 0 auto
-		color: darken($colors.orange, 75%)
-		border-radius: 2px
-		border-color: darken($colors.orange, 15%)
-		background: linear-gradient(top, $colors.orange, darken($colors.orange, 15%))
-
-		&:hover
-			background: linear-gradient(top, lighten($colors.orange, 10%), darken($colors.orange, 5%))
 
 
 	&:hover
@@ -66,15 +37,3 @@
 		& > a
 			color: $colors.white
 			text-decoration: none
-
-
-
-	&-login
-
-		background: transparent
-		border-width: 0
-		box-shadow: none
-
-		&:hover
-			color: $colors.white !important
-			background: $colorPreset.auth

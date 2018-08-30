@@ -1,7 +1,41 @@
-<article class="article">
+<?php include_once ('./data/articles.php') ?>
 
-  <div class="article-main">
+<div class="article-list-wrapper">
 
+  <ul class="filter-list">
+    <li class="filter-list__item filter-list__item--is-active">Neueste</li>
+    <li class="filter-list__item">Beliebteste</li>
+    <li class="filter-list__item">Meist aufgerufen</li>
+  </ul>
+
+  <div class="article-teasers">
+
+
+    <?php foreach ($articles as $article): ?>
+
+      <?php global $data; $data = (object)$article ?>
+      <?php include('./elements/partials/article-teaser.php'); ?>
+
+    <?php endforeach ?>
+
+
+    <?php foreach ($articles as $article): ?>
+
+      <?php global $data; $data = (object)$article ?>
+      <?php include('./elements/partials/article-teaser.php'); ?>
+
+    <?php endforeach ?>
+
+
+    <?php foreach ($articles as $article): ?>
+
+      <?php global $data; $data = (object)$article ?>
+      <?php include('./elements/partials/article-teaser.php'); ?>
+
+    <?php endforeach ?>
+
+
+    <!-- 
     <p>Geschichte mal anders erleben</p>
 
     <p>Es geht nicht darum historische Zeitangaben aneinanderzureihen oder wichtige Peronsnen der Zeitgeschichte aufzulisten.</p>
@@ -14,13 +48,7 @@
 
     <p>Neuster Artikel:</p>
     <p>1492: Christoph Kolumbus entdeckt Amerika</p>
-
-    <h3>Kategorie:</h3>
-
-    <p>Die Zeit der Entdeckungen</p>
-
-    <img src="img/Columbus_landing_on_Hispaniola_adj.jpg" alt="Kolumbus landet auf Hispaniola 1492" />
-
+    
     <ul>
       <li>Der Europäische Kolonialismus von 1492 bis 2000</li>
       <li>Russland: Der Aufstieg eines Riesenreiches</li>
@@ -40,12 +68,14 @@
 
     </ol>
 
+    -->
+
   </div>
 
 </article>
 
 
-
+<!--
 <section class="section section-teasers">
 
   <div class="section-content">
@@ -57,3 +87,4 @@
   </div>
 
 </section>
+-->

@@ -1,18 +1,30 @@
 
 .footer
-
 	padding: 0
-	text-align: center
-	background-color: $colors.white
+	border-top: 1px solid #f0f0f0
 
+	&__inner
+		max-width: 1160px
+		margin: 0 auto
+		padding: 10px 0
+		display: flex
+		justify-content: space-between
 
-	.footer-primary
-		padding: 50px 0 0 0
+	&__menu
+		width: 70%
+
+	.footermenu
+		display: flex
+
+		li
+			margin-right: 25px
+
+			a 
+				color: #808080
+				font-size: 12px
 
 
 	.footer-copyright
-		width: 480px
-		max-width: 100%
-		margin: 0 auto
-		padding: 25px 0
-		font-size: 12px
+		margin: 20px 0
+		color: #808080
+		font-size: 10px

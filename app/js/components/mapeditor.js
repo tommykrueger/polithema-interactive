@@ -1,6 +1,7 @@
 import Component from '../app/component';
 import DateTime from './datetime';
 import MapDriver from './interactivemap/components/mapdriver';
+import Scenario from '../models/scenario';
 
 export default class MapEditor extends Component {
 
@@ -28,6 +29,29 @@ export default class MapEditor extends Component {
     this.$map = $('#mapeditor');
     this.$map.append(this.$mapLeaflet);
     this.$map.append(this.$editorControls);
+
+
+
+    this.template = `
+
+      <nav class="menu">
+        <ul class="menu-items">
+          <li class="menu-item">
+            <span class="menu-item__button">Scenario</span>
+            <ul class="menu-items menu-items-subitems">
+              <li><span class="menu-item__button" title="Create a new Scenario">New</span></li>
+              <li><span class="menu-item__button button-scenario-open" title="Open an existing Scenario">Open</span></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    
+    `;
+
+
+    this.$editorControls.append( this.template );
+
+
 
     this.data = this.$map.data('json') || {};
     this.data = Object.assign(this.config, this.data);
@@ -198,6 +222,15 @@ export default class MapEditor extends Component {
 
   initEvents () {
 
+
+
+    this.$map.find('.button-scenario-open').on('click', () => {
+
+      let scenario = new Scenario();
+          scenario.getAll();
+
+    });
+
     // Add Editor Buttons
 
     this.buttonAddRoute = $('<button class="button button-add-route">New Route</button>');
@@ -303,7 +336,9 @@ export default class MapEditor extends Component {
   			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
   			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
   		id: this.MapDriver.get('osm').id
-  	}).addTo(this.map);
+    }).addTo(this.map);
+    
+    this.map.zoomControl.setPosition('bottomright');
 
 
     this.map.locate({ 

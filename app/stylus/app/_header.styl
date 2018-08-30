@@ -1,20 +1,22 @@
 
 .header
-	clearfix()
 	width: 100%
-	max-width: $page.width
-	margin: 0 auto
-	padding: 10px 50px
+	color: #f0f0f0
 	position: relative
-	background-color: $colors.white
+	background-color: #2a333a
+
+	&__inner
+		max-width: 1160px
+		margin: 0 auto
+		padding: 10px 0
 
 
 	.page-title
 		margin: 0 auto
 		padding: 0
-		float: left
-		color: $colors.black
-		background: $colors.white
+		display: inline-block
+		vertical-align: top
+		color: $colors.blue
 
 	.page-name
 		font-family: 'Vollkorn', serif
@@ -22,7 +24,7 @@
 		font-weight: bold
 
 		.poli
-			color: $colors.black
+			color: $colors.white
 
 		.thema
 			color: $colors.blue
@@ -33,12 +35,13 @@
 		font-weight: 100
 
 	a
-		color: $colors.black
+		color: $colors.white
 		text-decoration: none
 
 
 .header-menu
-	float: right
+	display: inline-block
+	vertical-align: top
 
 	li
 		padding: 0 5px
@@ -50,8 +53,20 @@
 
 
 
-.header-datetime
-	float: right
-	color: $colors.grey
-	font-size: 12px
-	line-height: 53px
+
+
+
+
+.subheader
+	width: 100%
+	color: #505050
+	position: relative
+	background-color: #ffffff
+	border-bottom: 1px solid #e9e9e9
+
+	&__inner
+		max-width: 1160px
+		margin: 0 auto
+		padding: 10px 0
+		display: flex
+		justify-content: space-between

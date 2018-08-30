@@ -20,6 +20,24 @@ $data = [
     'excerpt'
   ],
 
+  [
+    'id' => 3,
+    'title' => 'Die Erste Weltumseglung durch Ferdinand Magellán',
+    'subtitle' => 'Christoph Kolumbus entdeckt Amerika',
+    'url' => 'http://localhost/polithema-interactive/public/index.php?article=2',
+    'image' => 'img/Columbus_landing_on_Hispaniola_adj.jpg',
+    'excerpt'
+  ],
+
+  [
+    'id' => 3,
+    'title' => 'Die Erste Weltumseglung durch Ferdinand Magellán',
+    'subtitle' => 'Christoph Kolumbus entdeckt Amerika',
+    'url' => 'http://localhost/polithema-interactive/public/index.php?article=2',
+    'image' => 'img/Columbus_landing_on_Hispaniola_adj.jpg',
+    'excerpt'
+  ],
+
   
 
 ]

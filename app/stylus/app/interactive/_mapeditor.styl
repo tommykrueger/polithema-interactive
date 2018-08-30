@@ -1,0 +1,93 @@
+
+.mapeditor
+  width: 100%
+  height: 100%
+  display: block
+  position: absolute
+  left: 0
+  top: 0
+  background: #000
+
+
+
+
+
+.mapeditor-controls
+  width: 100%
+  padding: 0
+  display: block
+  z-index: 1000
+  position: absolute
+  left: 0
+  top: 0
+  background: alpha(#000, 0.5)
+
+  .button 
+    display: inline-block
+    display: none
+
+
+.button-add-marker
+.button-add-route
+.button-save-dataset
+select
+  margin: 0 5px
+  padding: 4px 8px
+  outline: 0
+  border: 1px solid steelblue
+
+  &.is-active
+    background: #fff
+    box-shadow: inset 0 0 4px #000
+
+
+.datasets
+  width: 200px
+  height: 32px
+  font-size: 16px
+  z-index: 10000
+  position: absolute
+  top: 20px
+  right: 20px
+
+
+
+
+
+
+
+.menu
+  display: block
+
+.menu-items
+  display: inline-block
+
+.menu-item
+  display: inline-block
+  position: relative
+
+  &:hover
+    & > .menu-items-subitems
+      display: block
+
+  &__button
+    display: block
+    padding: 10px 15px
+    color: #fff
+
+    &:hover
+      cursor: pointer
+      background-color: #000
+
+
+
+.menu-items-subitems
+  width: 100%
+  display: none
+  position: absolute
+  background: alpha(#000, 0.5)
+
+  .menu-item__button
+    font-size: 12px
+    text-transform: uppercase
+

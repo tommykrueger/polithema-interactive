@@ -45,6 +45,28 @@
       </p>
 
 
+      <h3>Historische Einordnung</h3>
+
+      <p>
+      
+        Die Entdeckung Amerikas durch Spanien Ende des 15. Jahrhunderts war die Grundlage für den Aufstieg Spaniens zur Kolonialmacht.
+        Vor der Entdeckung Amerikas war Spanien eher eine Regionalmacht in Europa. 50 Jahre nache Kolumbus war Spanien zu einer der 
+        reichsten Kolonialmächte mit globalem Machtanspruch aufgestiegen. Die gesamte Strategie der spanischen Politik wurde Kolonialisierung neuer Territorien in Übersee. Im 16. Jahrhundert übernahm
+        die Spanische Krone sogar Teile Europas in seinen Machtbereich auf. 
+        
+        Die Kolonialisierung Süd- und Nordamerikas war die Folge. Christoph Kolumbus war der Wegbereiter.
+        Nach der Entdeckung Amerikas begann die Zeit der Spanischen Eroberer. Bereits 1519 nicht einmal 30 Jahre nach Kolumbus 
+        eroberte Hernan Cortez das Reich der Azteken im heutigen Venezuela. Cortez legte damit den Grundstein für eine breite Expansion der Spanischen Krone nach Mittel- und Südamerika. 
+        Die Eroberung Amerikas beschleunigte sich rasant. Innerhalb weniger Jahrzehnte war der größte von Spanien in Besitz genommen worden. Nebenbei wurden die Königreiche der 
+        Maya, die Inka und die Azteken fast vollständig ausgelöscht. 
+
+        So ist die Spanische Sprache in ganz Mittelamerika und Südamerika verbreitet. Mit Ausnahme von Brasilien wird fast überall
+        Spanisch als Amtssprache geführt. Die meisten Sprachen der einheimischen Bevölkerung sind entweder ausgestorben oder werden
+        nur regional begrenzt gesprochen. Das ist das Vermächtnis der Spanischen Kolonialisierung Amerikas.
+
+      </p>
+
+
       <h3>Fragen</h3>
       <ul>
         <li>War Kolumbus der Erster Europäer in Amerika? -> Nein!</li>

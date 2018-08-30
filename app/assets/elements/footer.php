@@ -1,27 +1,25 @@
 <footer class="footer">
 
-	<div class="container large">
+	<div class="footer__inner">
+		
+		<div class="footer__menu">
 
-		<div class="footer-primary">
+			<ul class="menu footermenu">
+				<li><a href="./news.php">News</a></li>
+				<li><a href="./ueber-uns.php">Über uns</a></li>
+				<li><a href="./datenschutzerklaerung.php">Datenschutzerklärung</a></li>
+				<li><a href="./impressum.php">Impressum</a></li>
+				<li><a href="./kontakt.php">Kontakt</a></li>
+			</ul>
 
-			<?php include_once('elements/socials.php'); ?>
+			<div class="footer-copyright">
+				<p>&copy; 2016 - <?php echo date('Y') ?> Polithema Interaktiv ist ein Service von Polithema</p>
+			</div>
 
-		 	<ul class="menu footermenu primary">
-		    <li><a class="active" href="./privacy.php">Privacy</a></li>
-		    <li><a href="./news.php">News</a></li>
-		    <li><a href="./credits.php">Credits</a></li>
-		    <li><a href="./imprint.php">Imprint</a></li>
-		    <li><a href="./contact.php">Contact</a></li>
-		  </ul>
+		</div>
 
-
-      <div class="footer-copyright">
-				<p>Polithema Interaktiv ist ein Service von Polithema</p>
-        <p> &copy; 2016 - <?php echo date('Y') ?></p>
-    	</div>
-
-
-		 </div>
+		<?php include_once('elements/socials.php'); ?>
+		
 
 	</div>
 

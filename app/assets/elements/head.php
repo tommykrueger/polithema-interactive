@@ -30,6 +30,8 @@
   <!-- <script src="./js/leaflet.polylineDecorator.js"></script> -->
   <!-- <script src='//unpkg.com/leaflet-arc/bin/leaflet-arc.min.js'></script> -->
 
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB" crossorigin="anonymous"></script>
+
   <link href="http://fonts.googleapis.com/css?family=Roboto:400,500,300,700" rel="stylesheet" type="text/css">
   <link href='https://fonts.googleapis.com/css?family=Passion+One:400,700,900|Noto+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
   <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,700" rel="stylesheet">
