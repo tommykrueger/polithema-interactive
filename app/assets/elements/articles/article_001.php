@@ -1,6 +1,38 @@
 <?php // include_once('../server/scenarios/kolumbus_discovery.php') ?>
 
 
+<div class="breadcrumb">
+
+  <div class="breadcrumb__inner">
+    <ol class="breadcrumb__list">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Geschichte</a></li>
+      <li><a href="#">Zeitalter der Entdeckungen</a></li>
+    </ol>
+
+
+    <div class="article-header-group">
+      <h1 class="page-title">
+        <span class="subtitle">Christoph Kolumbus entdeckt Amerika</span>
+        <span class="title">1492 - Die Entdeckung der Neuen Welt</span>
+      </h1>
+
+      <ul class="article-teaser__info-list">
+        <li><i class="fas fa-eye fa-xs"></i> <span class="article-teaser__info-list-text">23212</span> </li>
+        <li><i class="fas fa-comments fa-xs"></i> <span class="article-teaser__info-list-text">7</span> </li>
+        <li><i class="fas fa-heart fa-xs"></i> <span class="article-teaser__info-list-text">123</span> </li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+
+<main class="main">
+
+<div class="content">
+
 <article class="article">
 
   <header class="article-header">
@@ -16,8 +48,10 @@
 
   <div class="article-main">
 
+    <!--
     <span class="article-subtitle">Christoph Kolumbus entdeckt Amerika</span>
     <h1 class="article-title">1492 - Die Entdeckung der Neuen Welt</h1>
+    -->
 
     <div class="article-excerpt">
 
@@ -309,3 +343,7 @@
   </aside>
 
 </article>
+
+</div>
+
+</main>

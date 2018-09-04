@@ -1,12 +1,11 @@
 <?php global $data; ?>
 
 
-
 <article class="article-teaser">
 
   <a href="<?= $data->url ?>"> 
     
-    <figure class="article__image-wrapper">
+    <figure class="article-teaser__image-wrapper">
       
       <img class="article-teaser__image" src="<?= $data->image ?>" alt="Kolumbus lands on Hispaniola" />
 

@@ -36,5 +36,7 @@
   <link href='https://fonts.googleapis.com/css?family=Passion+One:400,700,900|Noto+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
   <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,700" rel="stylesheet">
 
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,700,800" rel="stylesheet">
+
   
 </head>

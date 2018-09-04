@@ -1,11 +1,16 @@
 <?php include_once ('./data/articles.php') ?>
 
+<main class="main">
+
+<div class="content">
+
+
 <div class="article-list-wrapper">
 
   <ul class="filter-list">
     <li class="filter-list__item filter-list__item--is-active">Neueste</li>
     <li class="filter-list__item">Beliebteste</li>
-    <li class="filter-list__item">Meist aufgerufen</li>
+    <li class="filter-list__item">Meist gelesen</li>
   </ul>
 
   <div class="article-teasers">
@@ -72,19 +77,8 @@
 
   </div>
 
-</article>
+</div>
 
+</div>
 
-<!--
-<section class="section section-teasers">
-
-  <div class="section-content">
-
-    <h3 class="section-title">Das Zeitalter der Entdeckungen</h3>
-
-    <?php include_once('partials/article-teasers.php') ?>
-
-  </div>
-
-</section>
--->
+</main>

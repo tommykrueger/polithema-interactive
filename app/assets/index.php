@@ -7,11 +7,28 @@
 
   <div class="page">
 
-    <?php include_once('elements/header.php'); ?>
+    <?php 
+    
+    include_once('elements/header.php');
 
-    <?php include_once('elements/main.php'); ?>
+    $articleID = isset($_GET['article']) ? (int)$_GET['article'] : false;
+    
+    if ( !$articleID ) {
 
-    <?php include_once('elements/footer.php'); ?>
+      include_once('elements/subheader.php'); 
+      include_once('elements/article-overview.php');
+
+    }
+
+    else {
+
+      include_once('elements/article.php');
+
+    }
+
+    include_once('elements/footer.php'); 
+    
+    ?>
 
   </div>
 

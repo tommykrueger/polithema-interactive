@@ -3,9 +3,6 @@ export default class EventTimeline {
 
   constructor ( options = {} ) {
 
-
-    return false;
-
     this.data = options.data;
     this._events = this.data.events;
 

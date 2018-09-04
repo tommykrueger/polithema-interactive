@@ -1,13 +1,14 @@
 import Component from '../../app/component';
 
 import DateTime from '../datetime';
-//import EventTimeline from '../eventtimeline';
+import EventTimeline from '../eventtimeline';
 
 import Fleet from '../../models/fleet';
 
 import Globe from '../globe';
 import MapDriver from './components/mapdriver';
 //import EventManager from './components/eventmanager';
+
 
 import * as d3 from "d3";
 
@@ -17,8 +18,6 @@ export default class InteractiveMap extends Component {
   constructor ( options = {} ) {
 
     super(options);
-
-    console.log(options);
 
     this.MapDriver = new MapDriver();
     this.MapDriver.init();
@@ -37,7 +36,6 @@ export default class InteractiveMap extends Component {
 
     this.datasetColors = ['#ce0000', '#00ce00', '#cece00', '#0000ce'];
 
-
     this.isViewToggled = false;
 
 
@@ -51,12 +49,32 @@ export default class InteractiveMap extends Component {
     this.$map = $('#map-interactive');
     this.$mapLeaflet = $('<div class="map-leaflet" id="map-leaflet"></div>');
     this.$mapGlobe = $('<div class="map-globe" id="map-globe"></div>');
+    this.$mapTimeline = $('<div class="map-timeline" id="map-timeline"></div>');
+
+    this.$infoBox = $(`
+      <div class="map-event-info">
+        <div class="map-event-info__text">
+        <span class="map-event-info__icon"><i class="fas fa-info-circle sm"></i></span>
+          Die Entdeckung der "Neuen Welt" durch Christoph Kolumbus gilt als einer der wichtigsten historischen Ereignisse 
+          der Europäischen Geschichte. Mit der Entdeckung Amerikas beginnt eine rund 500 Jahre andauernde Zeit der Kolonialisierung
+          der Welt durch die Europäischen Großmächte.
+        </div>
+      </div>
+    `);
 
     this.$map.append(this.$mapLeaflet);
     this.$map.append(this.$mapGlobe);
+    this.$map.append(this.$mapTimeline);
+    this.$map.append(this.$infoBox);
 
     this.data = this.$map.data('json').data;
+
+
+    this.marker = null;
     this.movingMarkers = [];
+
+
+    this.features = [];
 
     /*
     this.eventTimeline = new EventTimeline({
@@ -81,25 +99,40 @@ export default class InteractiveMap extends Component {
 
     //this.registerFleets();
     //this.registerWaypoints();
+
+    this.data.events = [
+      {
+        name: 'Miao',
+        text: 'juppi',
+        date: '1492-03-08',
+        location: [37.09172, -6.82432]
+      },
+      {
+        name: 'Reparaturen auf La Gomera',
+        text: 'Fast einen Monat lang dauern die Reparaturen. Von La Gomera aus geht es Richtung Westen quer über den Atlantik.',
+        date: '1492-09-01',
+        location: [28.10236,-17.35936],
+      },
+      {
+        name: 'Ankunft in der Neuen Welt',
+        text: 'Great',
+        date: '1492-10-03',
+        location: [22.564576274295437,-73.60451459884645],
+      }
+    ];
+
     this.registerEvents();
 
     this.addDataSeries();
 
     // start the render loop
-    // this.render();
+    
 
     this.$globeLayer = this.$mapGlobe;
     //$(this.node).before(this.$globeLayer);
 
     this.init();
     // this.initEvents();
-
-
-    //this.$mapLeaflet.append('<img class="image-overlay" src="img/Columbus_first_voyage.jpg">');
-
-    // 2 = editor mode
-    //this.mode = 2;
-
 
   }
 
@@ -120,9 +153,13 @@ export default class InteractiveMap extends Component {
 
       this.initGlobe();
 
-      this.loadStuff();
+      // this.loadStuff();
 
     }, 1000);
+
+    // this.loadStuff();
+
+    this.updateFeatures();
 
   }
 
@@ -149,16 +186,22 @@ export default class InteractiveMap extends Component {
     $(this.node).append( this.$template );
 
 
+    /*
     this.$template.find('.button-play').on('click', (e) => {
 
       this.movingMarker.start();
 
     });
-
+    */
 
     this.$template.find('.dataset').on('click', (e) => {
 
-      this.movingMarkers[ $(e.currentTarget).data('id') ].start();
+      this.marker = this.movingMarkers[ $(e.currentTarget).data('id') ];
+
+      console.log( this.marker.getLatLng() );
+      this.marker.start();
+
+      this.render();
 
     });
 
@@ -192,12 +235,10 @@ export default class InteractiveMap extends Component {
 
   initMap () {
 
-    console.log('center', this.getCenter());
-
     this.map = L.map('map-leaflet', /*{worldCopyJump: true}*/ ).setView( this.getCenter(), this.getZoom() );
 
     L.tileLayer( this.MapDriver.get('worldoceanbase').url, {
-  		maxZoom: 12,
+  		maxZoom: 10,
       minZoom: 2,
   		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
   			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -205,18 +246,9 @@ export default class InteractiveMap extends Component {
   		id: this.MapDriver.get('worldoceanbase').id
   	}).addTo(this.map);
 
+    this.map.zoomControl.setPosition('topright');
 
     this.map.locate({setView: true, maxZoom: 5});
-
-    /*
-    var marker = L.divIcon({
-      iconSize: [30, 30],
-      iconAnchor: [10, 10],
-      popupAnchor: [10, 0],
-      shadowSize: [0, 0],
-      className: 'animated-icon my-icon-id'
-    });
-    */
 
 
     this.map.on('click', (e) => {
@@ -251,6 +283,152 @@ export default class InteractiveMap extends Component {
 
     }
 
+
+
+    L.svg().addTo(this.map);	
+    this.svg = d3.select("#map-leaflet").select("svg");
+
+    let defs = this.svg.append('defs');
+    let marker = defs.append('marker')
+      .attr('id', 'arrow')
+      .attr('markerUnits', 'strokeWidth')
+      .attr('markerWidth', '12')
+      .attr('markerHeight', '12')
+      .attr('viewBox', '0 0 12 12')
+      .attr('refX', '6')
+      .attr('refY', '6')
+      .attr('orient', 'auto')
+
+    marker
+      .append('path')
+        //.attr('d', 'M2,2 L10,6 L2,10 L6,6 L2,2')
+        .attr('d', 'M2,2 L2,11 L10,6 L2,2')
+        .attr('fill', '#c90000');
+
+    /*
+    defs.append('path')
+      .attr('id', 'arrowhead')
+      .attr('d', 'M7,0 L-7,-5 L-7,5 Z');
+    */
+
+
+
+    this.g = this.svg.append('g');
+
+    var self = this;
+    this.transform = d3.geoTransform({point: function(x, y) {
+
+      // console.log(x,y);
+      if (x && y) {
+        let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
+        this.stream.point( point.x, point.y );
+      }
+
+    }});
+
+    this.path = d3.geoPath().projection(this.transform);
+
+
+    this.lineGenerator = d3.line().curve(d3.curveCardinal);
+    var s = { "features": [ { "type": "Feature", "geometry": { "type": "LineString", "coordinates": [ [46.35238, -3.38533], [44.56479, -9.7574], [41.15152, -11.99862], [47.99521, -16.96444], [43.42201, -16.77132] ] }} ] };
+        
+    var p = this.g.selectAll('.line-path')
+      .data(s.features)
+      .enter()
+      .append('path')
+      .attr('class', 'line-path')
+      .attr("stroke", "gray")
+      .attr("fill", "red")
+      .attr("fill-opacity", 0.8)
+      .attr("marker-end","url(#arrow)"); 
+
+
+    // var u = this.g.append("use").attr("xlink:href", "#arrowhead");
+
+    p.attr('d', this.path);
+
+
+    this.map.on("moveend", () => {
+    
+      // featureElement.attr("d", path);
+
+      /*
+      p.attr("d", (d) => { 
+        let p = this.path(d);
+        let py = p.split('L');
+        let arr = [];
+
+        py.forEach( (pp) => {
+
+          let ppp = pp.split(',');
+
+          ppp[0] = ppp[0].replace('M', '');
+
+          arr.push([ppp[0], ppp[1]]);
+
+        });
+        return this.lineGenerator(arr);
+      
+      });
+      */
+
+      this.updateFeatures();
+
+    });
+
+  }
+
+
+
+  addSVGRoute (route) {
+
+    console.info('creating route svg path');
+
+    // route = route.filter(r => r.reverse());
+
+    // create a GeoJSON feature Object
+    let features = { 
+      "features": [
+        { 
+          "type": "Feature", 
+          "geometry": { 
+            "type": "LineString", 
+            "coordinates": route
+          }
+        }
+      ]
+    };
+
+    let p = this.g.selectAll('.line-route')
+      .data(features.features)
+      .enter()
+      .append('path')
+      .attr('class', 'line-route')
+      .attr("stroke", "gray")
+      .attr("fill", "red")
+      .attr("fill-opacity", 0.8)
+      .attr("marker-end","url(#arrow)"); 
+
+
+    this.features.push({
+      type: 'line',
+      path: p
+    });
+
+  }
+
+
+
+  updateFeatures () {
+
+    this.features.forEach( (feature) => {
+      
+      if (feature.type === 'line') {
+        feature.path.attr('d', this.path);
+      }
+
+    });
+
   }
 
 
@@ -269,7 +447,7 @@ export default class InteractiveMap extends Component {
         var svg = d3.select("#map-leaflet").select("svg");
     
         let defs = svg.append('defs');
-        defs.append('marker')
+        let marker = defs.append('marker')
           .attr('id', 'arrow')
           .attr('markerUnits', 'strokeWidth')
           .attr('markerWidth', '12')
@@ -279,9 +457,10 @@ export default class InteractiveMap extends Component {
           .attr('refY', '6')
           .attr('orient', 'auto')
 
-        defs
+        marker
           .append('path')
-            .attr('d', 'M2,2 L10,6 L2,10 L6,6 L2,2')
+            //.attr('d', 'M2,2 L10,6 L2,10 L6,6 L2,2')
+            .attr('d', 'M2,2 L2,11 L10,6 L2,2')
             .attr('fill', '#f00000');
 
         defs.append('path')
@@ -295,7 +474,7 @@ export default class InteractiveMap extends Component {
 
         function projectPoint(x, y) {
 
-          console.log(x,y);
+          // console.log(x,y);
           if (x && y) {
             let point = self.map.latLngToLayerPoint(new L.LatLng(x, y));
             //console.log(point);
@@ -323,10 +502,11 @@ export default class InteractiveMap extends Component {
 
         var s = { "features": [ { "type": "Feature", "geometry": { "type": "LineString", "coordinates": [ [46.35238, -3.38533], [44.56479, -9.7574], [41.15152, -11.99862], [47.99521, -16.96444], [43.42201, -16.77132] ] }} ] };
         
-
+        /*
         var pathData = lineGenerator([
           [33.21112, -36.21094], [39.02772, -45.79102], [32.99024, -39.02344], [40.84706, -32.43164]
         ]);
+        */
 
         console.log(s.features);
 
@@ -337,12 +517,12 @@ export default class InteractiveMap extends Component {
           .attr('class', 'line-path')
           .attr("stroke", "gray")
           .attr("fill", "red")
-          .attr("fill-opacity", 0.8);
+          .attr("fill-opacity", 0.8)
+          .attr("marker-end","url(#arrow)"); 
 
 
         var u = g.append("use")
           .attr("xlink:href", "#arrowhead");
-          //.attr("marker-end","url(#arrow)"); 
 
 
         p.attr('d', path);
@@ -574,10 +754,11 @@ export default class InteractiveMap extends Component {
 
     this.data.series.forEach( (serie, i) => {
 
-      //console.log(serie, i);
-
       if (serie.route) {
 
+        this.addSVGRoute(serie.route);
+
+        /*
         let polyline = L.polyline([ serie.route ],
           {
               color: colors[i],
@@ -588,6 +769,8 @@ export default class InteractiveMap extends Component {
               smoothFactor: 0
           }
         ).addTo(this.map);
+
+        */
 
         /*
         L.polylineDecorator(serie.route, {
@@ -604,8 +787,8 @@ export default class InteractiveMap extends Component {
               }
             })
           }]
-      }).addTo(this.map);
-      */
+        }).addTo(this.map);
+        */
 
 
         // let animatedMarker = L.animatedMarker(polyline.getLatLngs()).addTo(this.map);
@@ -632,7 +815,10 @@ export default class InteractiveMap extends Component {
 
         }); 
 
-        let marker = L.divIcon({ className: 'moving-marker' });
+        let marker = L.divIcon({ 
+          className: 'moving-marker',
+          html: `<div><span class="marker-unit"></span><span class="marker-unit"></span><span class="marker-unit"></span></div>` 
+        });
 
         this.movingMarkers.push(
           L.Marker.movingMarker(this.data.series[0].route, movingMarkerSpeed, { icon: marker, autostart: false }).addTo(this.map)
@@ -792,15 +978,12 @@ export default class InteractiveMap extends Component {
 
       } else {
 
-        let divIcon = L.divIcon({ className: 'mapicon-event' });
+        let divIcon = L.divIcon({ className: 'mapicon-event', iconSize: L.point(16,16) });
 
-        let marker = L.marker(event.location, { icon: divIcon, draggable:true }).addTo(this.map);
+        let marker = L.marker(event.location, { icon: divIcon }).addTo(this.map);
         marker.bindPopup("<b>" + event.name + "</b><br>" + event.date + "" + event.text + "");
 
-        marker.on('dragend', (e) => {
-          let position = marker.getLatLng();
-          console.log( position );
-        });
+        console.log('__marker', marker);
 
       }
 
@@ -850,6 +1033,13 @@ export default class InteractiveMap extends Component {
       if (this.stateRunning) {
 
 
+        // this.map.panTo( this.marker.getLatLng());
+
+        // update map center every 10 seconds
+        if (this.secondsElapsed % 10 == 0)
+          this.map.setView(this.marker.getLatLng(), this.zoom, { animation: true });
+
+
         // the time in ms per tick (ideally 17ms max (1000/60))
         dtFrame = (tFrame - tFrameOld) * this.speed;
         tFrameOld = tFrame;
@@ -863,7 +1053,7 @@ export default class InteractiveMap extends Component {
         // check if a new event has occured
 
         this.fleets.forEach( (fleet) => {
-          fleet.update(dtFrame);
+          // fleet.update(dtFrame);
         });
 
 
@@ -876,7 +1066,7 @@ export default class InteractiveMap extends Component {
 
         }
 
-        this.datetime.update(deltaElapsed);
+        // this.datetime.update(deltaElapsed);
 
 
         this.counter++;

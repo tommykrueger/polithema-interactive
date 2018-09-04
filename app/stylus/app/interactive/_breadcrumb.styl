@@ -1,0 +1,45 @@
+.breadcrumb
+  width: 100%
+  display: block
+  padding: 10px 0
+  color: #505050
+  position: relative
+  background-color: #ffffff
+  border-bottom: 1px solid #e9e9e9
+
+  &__inner
+    max-width: 1160px
+    margin: 0 auto
+    padding: 10px 0
+
+  &__list 
+    display: flex
+    
+    li
+      margin-right: 10px
+      &:after
+        content: '#'
+        margin: 0 0 0 8px
+        display: inline-block
+        font-weight: 300
+        font-family: 'Montserrat', Arial, sans-serif
+        vertical-align: middle
+        color: #e9e9e9
+        font-size: 15px
+
+      &:last-child:after
+        display: none
+
+    a
+      @extends $fontBaseStyle
+      padding: 6px 10px
+      color: #a0a0a0
+      border-radius: 16px
+      display: inline-block
+      vertical-align: middle
+      border: 1px solid #f0f0f0
+      background-color: #f3f2f1
+
+      &:hover
+        color: $colors.black
+      

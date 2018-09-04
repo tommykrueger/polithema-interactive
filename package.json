@@ -16,7 +16,9 @@
     "production": "brunch build --production"
   },
   "dependencies": {
-    "d3": "^5.5.0"
+    "d3": "^5.5.0",
+    "d3-timeline": "^1.0.1",
+    "ine": "^1.0.0"
   },
   "devDependencies": {
     "auto-reload-brunch": "^2",
